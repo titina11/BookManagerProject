@@ -1,0 +1,44 @@
+﻿@model IEnumerable<BookManager.ViewModels.Book.BookViewModel>
+
+@{
+	ViewData["Title"] = "Списък с книги";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>
+	<a asp-action="Create" class="btn btn-primary">Добави нова книга</a>
+</p>
+
+<table class="table table-striped">
+	<thead>
+	<tr>
+		<th>Заглавие</th>
+		<th>Автор</th>
+		<th>Жанр</th>
+		<th>Корица</th>
+		<th></th>
+	</tr>
+	</thead>
+	<tbody>
+	@foreach (var book in Model)
+	{
+		<tr>
+			<td>@book.Title</td>
+			<td>@book.Author</td>
+			<td>@book.Genre</td>
+			<td>
+				@if (!string.IsNullOrEmpty(book.ImageUrl))
+				{
+					<img src="@book.ImageUrl" alt="Корица" style="height: 60px;" />
+				}
+			</td>
+			<td>
+				<a asp-action="Details" asp-route-id="@book.Id" class="btn btn-info btn-sm">Преглед</a>
+				<a asp-action="Edit" asp-route-id="@book.Id" class="btn btn-warning btn-sm">Редактирай</a>
+				<a asp-action="Delete" asp-route-id="@book.Id" class="btn btn-danger btn-sm">Изтрий</a>
+			</td>
+		</tr>
+	}
+	</tbody>
+</table>

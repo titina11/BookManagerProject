@@ -1,7 +1,7 @@
 ﻿using BookManager.Data;
 using BookManager.Data.Models;
 using BookManager.Services.Core.Contracts;
-using BookManager.ViewModels;
+using BookManager.ViewModels.Book;
 using BookManager.Web.Areas.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,13 +21,16 @@ namespace BookManager.Services.Core
             return await _context.Books
                 .Include(b => b.Author)
                 .Include(b => b.Genre)
+                .Include(b => b.Publisher)
                 .Select(b => new BookViewModel
                 {
                     Id = b.Id,
                     Title = b.Title,
+                    Description = b.Description,
                     Author = b.Author.Name,
                     Genre = b.Genre.Name,
-                    Description = b.Description
+                    Publisher = b.Publisher.Name,
+                    ImageUrl = b.ImageUrl
                 })
                 .ToListAsync();
         }
@@ -37,6 +40,7 @@ namespace BookManager.Services.Core
             var book = await _context.Books
                 .Include(b => b.Author)
                 .Include(b => b.Genre)
+                .Include(b => b.Publisher)
                 .FirstOrDefaultAsync(b => b.Id == id);
 
             if (book == null) return null;
@@ -45,51 +49,83 @@ namespace BookManager.Services.Core
             {
                 Id = book.Id,
                 Title = book.Title,
+                Description = book.Description,
                 Author = book.Author.Name,
                 Genre = book.Genre.Name,
-                Description = book.Description
+                Publisher = book.Publisher.Name,
+                ImageUrl = book.ImageUrl
             };
         }
 
-        public async Task CreateAsync(BookViewModel model)
+        public async Task<CreateBookViewModel> GetCreateModelAsync()
         {
-            var author = await _context.Authors.FirstOrDefaultAsync(a => a.Name == model.Author);
-            var genre = await _context.Genres.FirstOrDefaultAsync(g => g.Name == model.Genre);
-
-            if (author == null || genre == null)
+            return new CreateBookViewModel
             {
-                throw new ArgumentException("Invalid Author or Genre.");
-            }
+                Authors = await _context.Authors
+                    .Select(a => new AuthorDropdownViewModel { Id = a.Id, Name = a.Name })
+                    .ToListAsync(),
+                Genres = await _context.Genres
+                    .Select(g => new GenreDropdownViewModel { Id = g.Id, Name = g.Name })
+                    .ToListAsync(),
+                Publishers = await _context.Publishers
+                    .Select(p => new PublisherDropdownViewModel { Id = p.Id, Name = p.Name })
+                    .ToListAsync()
+            };
+        }
 
+        public async Task<EditBookViewModel?> GetEditModelAsync(int id)
+        {
+            var book = await _context.Books.FindAsync(id);
+            if (book == null) return null;
+
+            return new EditBookViewModel
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Description = book.Description,
+                AuthorId = book.AuthorId,
+                GenreId = book.GenreId,
+                PublisherId = book.PublisherId,
+                ImageUrl = book.ImageUrl,
+                Authors = await _context.Authors
+                    .Select(a => new AuthorDropdownViewModel { Id = a.Id, Name = a.Name })
+                    .ToListAsync(),
+                Genres = await _context.Genres
+                    .Select(g => new GenreDropdownViewModel { Id = g.Id, Name = g.Name })
+                    .ToListAsync(),
+                Publishers = await _context.Publishers
+                    .Select(p => new PublisherDropdownViewModel { Id = p.Id, Name = p.Name })
+                    .ToListAsync()
+            };
+        }
+
+        public async Task CreateAsync(CreateBookViewModel model)
+        {
             var book = new Book
             {
                 Title = model.Title,
                 Description = model.Description,
-                AuthorId = author.Id,
-                GenreId = genre.Id
+                AuthorId = model.AuthorId,
+                GenreId = model.GenreId,
+                PublisherId = model.PublisherId,
+                ImageUrl = model.ImageUrl
             };
 
             _context.Books.Add(book);
             await _context.SaveChangesAsync();
         }
 
-        public async Task EditAsync(int id, BookViewModel model)
+        public async Task EditAsync(int id, EditBookViewModel model)
         {
             var book = await _context.Books.FindAsync(id);
             if (book == null) return;
 
-            var author = await _context.Authors.FirstOrDefaultAsync(a => a.Name == model.Author);
-            var genre = await _context.Genres.FirstOrDefaultAsync(g => g.Name == model.Genre);
-
-            if (author == null || genre == null)
-            {
-                throw new ArgumentException("Invalid Author or Genre.");
-            }
-
             book.Title = model.Title;
             book.Description = model.Description;
-            book.AuthorId = author.Id;
-            book.GenreId = genre.Id;
+            book.AuthorId = model.AuthorId;
+            book.GenreId = model.GenreId;
+            book.PublisherId = model.PublisherId;
+            book.ImageUrl = model.ImageUrl;
 
             await _context.SaveChangesAsync();
         }

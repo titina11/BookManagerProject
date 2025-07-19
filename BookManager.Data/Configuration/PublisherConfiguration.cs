@@ -12,5 +12,11 @@ public class PublisherConfiguration : IEntityTypeConfiguration<Publisher>
 
         builder.Property(p => p.Description)
             .HasMaxLength(1000);
+
+        builder.HasData(
+            new Publisher { Id = 1, Name = "Студио Артлайн" },
+            new Publisher { Id = 2, Name = "Егмонт" },
+            new Publisher { Id = 3, Name = "Бард" }
+        );
     }
 }

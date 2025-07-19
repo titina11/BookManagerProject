@@ -1,0 +1,20 @@
+﻿@model BookManager.ViewModels.Book.BookViewModel
+
+@{
+	ViewData["Title"] = Model.Title;
+}
+
+<h2>@Model.Title</h2>
+
+<p><strong>Автор:</strong> @Model.Author</p>
+<p><strong>Жанр:</strong> @Model.Genre</p>
+<p><strong>Описание:</strong></p>
+<p>@Model.Description</p>
+
+@if (!string.IsNullOrEmpty(Model.ImageUrl))
+{
+	<img src="@Model.ImageUrl" alt="Корица" class="img-thumbnail" style="max-height: 300px;" />
+}
+
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Редактирай</a>
+<a asp-action="Index" class="btn btn-secondary">Обратно към списъка</a>

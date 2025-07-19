@@ -9,5 +9,23 @@ public class AuthorConfiguration : IEntityTypeConfiguration<Author>
         builder.Property(a => a.Name)
             .IsRequired()
             .HasMaxLength(100);
+
+        builder.HasData(
+            new Author
+            {
+                Id = 1,
+                Name = "Кариса Броудбент"
+            },
+            new Author
+            {
+                Id = 2,
+                Name = "Сара Дж. Маас"
+            },
+            new Author
+            {
+                Id = 3,
+                Name = "Джордж Р.Р.Мартин"
+            }
+        );
     }
 }

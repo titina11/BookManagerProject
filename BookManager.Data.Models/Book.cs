@@ -18,6 +18,8 @@ namespace BookManager.Data.Models
 
         public int GenreId { get; set; }
         public Genre Genre { get; set; } = null!;
+
+        public string? ImageUrl { get; set; }
         public ICollection<UserBook> UserBooks { get; set; } = new HashSet<UserBook>();
 
         public ICollection<Review> Reviews { get; set; } = new List<Review>();

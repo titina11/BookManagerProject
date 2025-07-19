@@ -1,14 +1,15 @@
-﻿
-using BookManager.ViewModels;
+﻿using BookManager.ViewModels.Book;
 
-namespace BookManager.Services.Core.Contracts
+public interface IBookService
 {
-    public interface IBookService
-    {
-        Task<IEnumerable<BookViewModel>> GetAllAsync();
-        Task<BookViewModel?> GetByIdAsync(int id);
-        Task CreateAsync(BookViewModel model);
-        Task EditAsync(int id, BookViewModel model);
-        Task DeleteAsync(int id);
-    }
+    Task<IEnumerable<BookViewModel>> GetAllAsync();
+    Task<BookViewModel?> GetByIdAsync(int id);
+
+    Task<CreateBookViewModel> GetCreateModelAsync();
+    Task<EditBookViewModel?> GetEditModelAsync(int id);
+
+    Task CreateAsync(CreateBookViewModel model);
+    Task EditAsync(int id, EditBookViewModel model);
+
+    Task DeleteAsync(int id);
 }

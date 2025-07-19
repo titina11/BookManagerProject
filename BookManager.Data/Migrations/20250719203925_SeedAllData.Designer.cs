@@ -4,6 +4,7 @@ using BookManager.Web.Areas.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,13 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookManager.Data.Migrations
 {
     [DbContext(typeof(BookManagerDbContext))]
-    partial class BookManagerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250719203925_SeedAllData")]
+    partial class SeedAllData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.17")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -142,8 +145,7 @@ namespace BookManager.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ImageUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PublisherId")
                         .HasColumnType("int");
@@ -170,8 +172,7 @@ namespace BookManager.Data.Migrations
                             AuthorId = 1,
                             Description = "„Змията и крилете на нощта“, първата книга от популярната поредица „Короните на Наяксия“, любима на десетки хиляди читатели по света.",
                             GenreId = 2,
-                            ImageUrl = "https://knigoman.bg/books/2303525764_1552613569786.png",
-                            PublisherId = 1,
+                            PublisherId = 0,
                             Title = "Змията и крилете на нощта"
                         },
                         new
@@ -180,8 +181,7 @@ namespace BookManager.Data.Migrations
                             AuthorId = 2,
                             Description = "Селена Сардотиен е измъкната от затвора на Ендовер и единственият начин да спечели свободата си е да се пребори с най-жестоките мъже за титлата - кралски убиец. Но под красивата външност на Селена се крие боец с убийствени инстинкти. А свободата си струва всяка пролята капка кръв - и собствената и чуждата.",
                             GenreId = 1,
-                            ImageUrl = "https://cdn.ozone.bg/media/catalog/product/s/t/stakleniyat_tron_stakleniyat_tron_1_novo_izdanie_1713431567_0.jpg",
-                            PublisherId = 2,
+                            PublisherId = 0,
                             Title = "Стъкленият трон"
                         },
                         new
@@ -190,8 +190,7 @@ namespace BookManager.Data.Migrations
                             AuthorId = 3,
                             Description = "Шеметен бяг от скована в жесток студ страна към земи на вечно лято и охолно безгрижие. Сказание за владетели и владетелки, воини и чародеи, наемни убийци и незаконнородени претенденти за власт, появили се във времена на мрачни поличби.",
                             GenreId = 1,
-                            ImageUrl = "https://cdn.ozone.bg/media/catalog/product/i/g/igra-na-tronove-pesen-za-og-n-i-led-1.jpg",
-                            PublisherId = 3,
+                            PublisherId = 0,
                             Title = "Игра на тронове (Песен за огън и лед 1)"
                         });
                 });

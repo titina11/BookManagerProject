@@ -9,5 +9,11 @@ public class GenreConfiguration : IEntityTypeConfiguration<Genre>
         builder.Property(g => g.Name)
             .IsRequired()
             .HasMaxLength(50);
+
+        builder.HasData(
+            new Genre { Id = 1, Name = "Фентъзи" },
+            new Genre { Id = 2, Name = "Любовни романи" },
+            new Genre { Id = 3, Name = "Научна фантастика" }
+        );
     }
 }

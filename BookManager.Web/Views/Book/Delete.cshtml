@@ -1,0 +1,25 @@
+﻿@model BookManager.ViewModels.Book.BookViewModel
+
+@{
+	ViewData["Title"] = "Изтриване на книга";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h3>Сигурни ли сте, че искате да изтриете тази книга?</h3>
+
+<div>
+	<h4>@Model.Title</h4>
+	<p>Автор: @Model.Author</p>
+	<p>Жанр: @Model.Genre</p>
+	@if (!string.IsNullOrEmpty(Model.ImageUrl))
+	{
+		<img src="@Model.ImageUrl" alt="Корица" class="img-thumbnail" style="max-height: 150px;" />
+	}
+</div>
+
+<form asp-action="Delete" method="post">
+	<input type="hidden" asp-for="Id" />
+	<button type="submit" class="btn btn-danger">Изтрий</button>
+	<a asp-action="Index" class="btn btn-secondary">Отказ</a>
+</form>
