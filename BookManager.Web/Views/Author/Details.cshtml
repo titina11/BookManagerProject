@@ -1,0 +1,21 @@
+﻿@using BookManager.ViewModels.Author
+@model AuthorViewModel
+
+@{
+	ViewData["Title"] = "Author Details";
+}
+
+<h2 class="text-center">Author Details</h2>
+
+<div class="card mt-4 shadow p-4">
+	<dl class="row">
+		<dt class="col-sm-3">First Name</dt>
+		<dd class="col-sm-9">@Model.Name</dd>
+
+	</dl>
+
+	<div class="mt-3">
+		<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+		<a asp-action="Index" class="btn btn-secondary">Back to List</a>
+	</div>
+</div>

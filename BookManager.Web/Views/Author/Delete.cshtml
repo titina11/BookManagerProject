@@ -1,0 +1,19 @@
+﻿@model BookManager.ViewModels.Author.DeleteAuthorViewModel
+
+@{
+	ViewData["Title"] = "Изтриване на автор";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h3>Сигурни ли сте, че искате да изтриете този автор?</h3>
+
+<div>
+	<h4>@Model.Name</h4>
+</div>
+
+<form asp-action="Delete" method="post">
+	<input type="hidden" asp-for="Id" />
+	<button type="submit" class="btn btn-danger">Изтрий</button>
+	<a asp-action="Index" class="btn btn-secondary">Отказ</a>
+</form>
