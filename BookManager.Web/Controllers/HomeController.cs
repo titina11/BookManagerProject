@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using BookManager.Web.Models;
+using BookManager.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookManager.Web.Controllers
