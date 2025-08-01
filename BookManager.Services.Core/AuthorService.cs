@@ -27,7 +27,7 @@ namespace BookManager.Services.Core
                 .ToListAsync();
         }
 
-        public async Task<AuthorViewModel?> GetByIdAsync(int id)
+        public async Task<AuthorViewModel?> GetByIdAsync(Guid id)
         {
             var author = await _context.Authors.FindAsync(id);
             if (author == null) return null;
@@ -43,6 +43,7 @@ namespace BookManager.Services.Core
         {
             var author = new Author
             {
+                Id = Guid.NewGuid(), 
                 Name = model.Name
             };
 
@@ -50,7 +51,7 @@ namespace BookManager.Services.Core
             await _context.SaveChangesAsync();
         }
 
-        public async Task EditAsync(int id, EditAuthorViewModel model)
+        public async Task EditAsync(Guid id, EditAuthorViewModel model)
         {
             var author = await _context.Authors.FindAsync(id);
             if (author == null) return;
@@ -60,7 +61,7 @@ namespace BookManager.Services.Core
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             var author = await _context.Authors.FindAsync(id);
             if (author == null) return;
@@ -69,7 +70,7 @@ namespace BookManager.Services.Core
             await _context.SaveChangesAsync();
         }
 
-        public async Task<DeleteAuthorViewModel?> GetDeleteByIdAsync(int id)
+        public async Task<DeleteAuthorViewModel?> GetDeleteByIdAsync(Guid id)
         {
             return await _context.Authors
                 .Where(a => a.Id == id)

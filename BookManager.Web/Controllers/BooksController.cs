@@ -42,7 +42,7 @@ namespace BookManager.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(Guid id)
         {
             var model = await _bookService.GetEditModelAsync(id);
             if (model == null) return NotFound();
@@ -51,7 +51,7 @@ namespace BookManager.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, EditBookViewModel model)
+        public async Task<IActionResult> Edit(Guid id, EditBookViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -69,7 +69,7 @@ namespace BookManager.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             var book = await _bookService.GetByIdAsync(id);
             if (book == null) return NotFound();
@@ -78,7 +78,7 @@ namespace BookManager.Web.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             await _bookService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));

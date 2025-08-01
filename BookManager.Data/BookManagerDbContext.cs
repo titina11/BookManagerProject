@@ -22,15 +22,14 @@ public class BookManagerDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<UserBook> UserBooks { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
-       // base.OnModelCreating(builder);
-       // builder.ApplyConfiguration(new BookConfiguration());
-       // builder.ApplyConfiguration(new AuthorConfiguration());
-       // builder.ApplyConfiguration(new GenreConfiguration());
-       // builder.ApplyConfiguration(new PublisherConfiguration());
-       // builder.ApplyConfiguration(new UserBookConfiguration());
 
         base.OnModelCreating(builder);
-        builder.ApplyConfigurationsFromAssembly(typeof(BookManagerDbContext).Assembly);
+        builder.ApplyConfiguration(new BookConfiguration());
+        builder.ApplyConfiguration(new AuthorConfiguration());
+        builder.ApplyConfiguration(new GenreConfiguration());
+        builder.ApplyConfiguration(new PublisherConfiguration());
+        builder.ApplyConfiguration(new UserBookConfiguration());
+
     }
 
 }

@@ -4,11 +4,11 @@
     {
         public string Title { get; set; } = null!;
 
-        public int AuthorId { get; set; }
+        public Guid AuthorId { get; set; }
 
-        public int PublisherId { get; set; }
+        public Guid PublisherId { get; set; }
 
-        public int GenreId { get; set; }
+        public Guid GenreId { get; set; }
 
         public string Description { get; set; } = null!;
 

@@ -6,14 +6,14 @@ namespace BookManager.Services.Core.Contracts
     {
         Task<IEnumerable<AuthorViewModel>> GetAllAsync();
 
-        Task<AuthorViewModel?> GetByIdAsync(int id);
+        Task<AuthorViewModel?> GetByIdAsync(Guid id);
 
         Task CreateAsync(CreateAuthorViewModel model);
 
-        Task EditAsync(int id, EditAuthorViewModel model);
+        Task EditAsync(Guid id, EditAuthorViewModel model);
 
-        Task DeleteAsync(int id);
+        Task DeleteAsync(Guid id);
 
-        Task<DeleteAuthorViewModel?> GetDeleteByIdAsync(int id);
+        Task<DeleteAuthorViewModel?> GetDeleteByIdAsync(Guid id);
     }
 }

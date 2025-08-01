@@ -4,19 +4,19 @@ namespace BookManager.Data.Models
 {
     public class Book
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public string Title { get; set; } = null!;
 
         public string Description { get; set; } = null!;
 
-        public int AuthorId { get; set; }
+        public Guid AuthorId { get; set; }
         public Author Author { get; set; } = null!;
 
-        public int PublisherId { get; set; }    
+        public Guid PublisherId { get; set; }    
         public Publisher Publisher { get; set; } = null!;
 
-        public int GenreId { get; set; }
+        public Guid GenreId { get; set; }
         public Genre Genre { get; set; } = null!;
 
         public string? ImageUrl { get; set; }

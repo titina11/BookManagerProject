@@ -3,13 +3,13 @@
 public interface IBookService
 {
     Task<IEnumerable<BookViewModel>> GetAllAsync();
-    Task<BookViewModel?> GetByIdAsync(int id);
+    Task<BookViewModel?> GetByIdAsync(Guid id);
 
     Task<CreateBookViewModel> GetCreateModelAsync();
-    Task<EditBookViewModel?> GetEditModelAsync(int id);
+    Task<EditBookViewModel?> GetEditModelAsync(Guid id);
 
     Task CreateAsync(CreateBookViewModel model);
-    Task EditAsync(int id, EditBookViewModel model);
+    Task EditAsync(Guid id, EditBookViewModel model);
 
-    Task DeleteAsync(int id);
+    Task DeleteAsync(Guid id);
 }

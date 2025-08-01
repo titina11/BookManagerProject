@@ -6,11 +6,11 @@
 
         public string Description { get; set; } = null!;
 
-        public int AuthorId { get; set; }
+        public Guid AuthorId { get; set; }
 
-        public int GenreId { get; set; }
+        public Guid GenreId { get; set; }
 
-        public int PublisherId { get; set; }
+        public Guid PublisherId { get; set; }
 
         public string? ImageUrl { get; set; }
 
@@ -21,19 +21,19 @@
 
     public class AuthorDropdownViewModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; } = null!;
     }
 
     public class GenreDropdownViewModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; } = null!;
     }
 
     public class PublisherDropdownViewModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; } = null!;
     }
 }

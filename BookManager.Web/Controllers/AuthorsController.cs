@@ -23,7 +23,7 @@ namespace BookManager.Web.Controllers
 
 
         // GET: Author Details
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(Guid id)
         {
             var author = await _authorService.GetByIdAsync(id);
             if (author == null) return NotFound();
@@ -55,7 +55,7 @@ namespace BookManager.Web.Controllers
 
         // GET: Author Edit
         [HttpGet]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(Guid id)
         {
             var author = await _authorService.GetByIdAsync(id);
             if (author == null)
@@ -91,7 +91,7 @@ namespace BookManager.Web.Controllers
         }
 
         // GET: Author Delete
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             var author = await _authorService.GetByIdAsync(id);
 
@@ -106,7 +106,7 @@ namespace BookManager.Web.Controllers
         // POST: Author Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             await _authorService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));

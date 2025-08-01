@@ -17,7 +17,7 @@ namespace BookManager.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.17")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -89,11 +89,9 @@ namespace BookManager.Data.Migrations
 
             modelBuilder.Entity("BookManager.Data.Models.Author", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -107,46 +105,44 @@ namespace BookManager.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            Id = new Guid("9e340fd5-7f9e-43dc-96f0-07a3b9a1b12a"),
                             Name = "Кариса Броудбент"
                         },
                         new
                         {
-                            Id = 2,
+                            Id = new Guid("264a2a30-ec23-4aef-b1cb-8c7a4c9f7fa4"),
                             Name = "Сара Дж. Маас"
                         },
                         new
                         {
-                            Id = 3,
+                            Id = new Guid("fdddc2cb-718a-4cf3-9a8c-490c61cd31ae"),
                             Name = "Джордж Р.Р.Мартин"
                         });
                 });
 
             modelBuilder.Entity("BookManager.Data.Models.Book", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
-                    b.Property<int>("GenreId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("GenreId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ImageUrl")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<int>("PublisherId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("PublisherId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -166,43 +162,31 @@ namespace BookManager.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
-                            AuthorId = 1,
-                            Description = "„Змията и крилете на нощта“, първата книга от популярната поредица „Короните на Наяксия“, любима на десетки хиляди читатели по света.",
-                            GenreId = 2,
+                            Id = new Guid("7a1a29d6-70c4-4c02-9469-3b92d3d9b7ee"),
+                            AuthorId = new Guid("9e340fd5-7f9e-43dc-96f0-07a3b9a1b12a"),
+                            Description = "…",
+                            GenreId = new Guid("e6a6a80b-9eb6-4ce3-92b5-00b5cf9a53db"),
                             ImageUrl = "https://knigoman.bg/books/2303525764_1552613569786.png",
-                            PublisherId = 1,
+                            PublisherId = new Guid("1f76d1f6-5c97-42b1-a5c7-e685b1541c1b"),
                             Title = "Змията и крилете на нощта"
                         },
                         new
                         {
-                            Id = 2,
-                            AuthorId = 2,
-                            Description = "Селена Сардотиен е измъкната от затвора на Ендовер и единственият начин да спечели свободата си е да се пребори с най-жестоките мъже за титлата - кралски убиец. Но под красивата външност на Селена се крие боец с убийствени инстинкти. А свободата си струва всяка пролята капка кръв - и собствената и чуждата.",
-                            GenreId = 1,
-                            ImageUrl = "https://cdn.ozone.bg/media/catalog/product/s/t/stakleniyat_tron_stakleniyat_tron_1_novo_izdanie_1713431567_0.jpg",
-                            PublisherId = 2,
+                            Id = new Guid("89c68c41-e015-4bc2-8c03-4fbd7a0f2678"),
+                            AuthorId = new Guid("264a2a30-ec23-4aef-b1cb-8c7a4c9f7fa4"),
+                            Description = "…",
+                            GenreId = new Guid("e6a6a80b-9eb6-4ce3-92b5-00b5cf9a53db"),
+                            ImageUrl = "https://cdn.ozone.bg/media/catalog/product/s/t/stakleniyat_tron_…",
+                            PublisherId = new Guid("2a9cd570-96b6-4f52-b56d-137e2c5d5eaf"),
                             Title = "Стъкленият трон"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AuthorId = 3,
-                            Description = "Шеметен бяг от скована в жесток студ страна към земи на вечно лято и охолно безгрижие. Сказание за владетели и владетелки, воини и чародеи, наемни убийци и незаконнородени претенденти за власт, появили се във времена на мрачни поличби.",
-                            GenreId = 1,
-                            ImageUrl = "https://cdn.ozone.bg/media/catalog/product/i/g/igra-na-tronove-pesen-za-og-n-i-led-1.jpg",
-                            PublisherId = 3,
-                            Title = "Игра на тронове (Песен за огън и лед 1)"
                         });
                 });
 
             modelBuilder.Entity("BookManager.Data.Models.Genre", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -216,28 +200,26 @@ namespace BookManager.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            Id = new Guid("e6a6a80b-9eb6-4ce3-92b5-00b5cf9a53db"),
                             Name = "Фентъзи"
                         },
                         new
                         {
-                            Id = 2,
+                            Id = new Guid("ac233f36-92df-4d0f-9bfc-c2928eb38f88"),
                             Name = "Любовни романи"
                         },
                         new
                         {
-                            Id = 3,
+                            Id = new Guid("87a2bb5d-7884-49ea-93a3-2ea7fbe630b6"),
                             Name = "Научна фантастика"
                         });
                 });
 
             modelBuilder.Entity("BookManager.Data.Models.Publisher", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
@@ -255,31 +237,32 @@ namespace BookManager.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            Id = new Guid("1f76d1f6-5c97-42b1-a5c7-e685b1541c1b"),
+                            Description = "Българско издателство за фентъзи и фантастика.",
                             Name = "Студио Артлайн"
                         },
                         new
                         {
-                            Id = 2,
+                            Id = new Guid("2a9cd570-96b6-4f52-b56d-137e2c5d5eaf"),
+                            Description = "Популярно издателство за младежка литература и фентъзи.",
                             Name = "Егмонт"
                         },
                         new
                         {
-                            Id = 3,
+                            Id = new Guid("3ff6d54c-b01a-4cc5-b289-15d20b92df7d"),
+                            Description = "Издателство за световни бестселъри и фантастика.",
                             Name = "Бард"
                         });
                 });
 
             modelBuilder.Entity("BookManager.Data.Models.Review", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -439,8 +422,8 @@ namespace BookManager.Data.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("UserId", "BookId");
 

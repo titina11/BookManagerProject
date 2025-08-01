@@ -4,7 +4,7 @@ namespace BookManager.Data.Models
 {
     public class Review
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public string Content { get; set; } = null!;
 
@@ -13,7 +13,7 @@ namespace BookManager.Data.Models
         public string UserId { get; set; } = null!;
         public ApplicationUser User { get; set; } = null!;
 
-        public int BookId { get; set; }
+        public Guid BookId { get; set; }
         public Book Book { get; set; } = null!;
     }
 

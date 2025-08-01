@@ -34,33 +34,23 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
         builder.HasData(
             new Book
             {
-                Id = 1,
+                Id = Guid.Parse("7a1a29d6-70c4-4c02-9469-3b92d3d9b7ee"),
                 Title = "Змията и крилете на нощта",
-                AuthorId = 1,
-                GenreId = 2,
-                Description = "„Змията и крилете на нощта“, първата книга от популярната поредица „Короните на Наяксия“, любима на десетки хиляди читатели по света.",
-                PublisherId = 1,
+                AuthorId = Guid.Parse("9e340fd5-7f9e-43dc-96f0-07a3b9a1b12a"),
+                GenreId = Guid.Parse("e6a6a80b-9eb6-4ce3-92b5-00b5cf9a53db"),
+                PublisherId = Guid.Parse("1f76d1f6-5c97-42b1-a5c7-e685b1541c1b"),
+                Description = "…",
                 ImageUrl = "https://knigoman.bg/books/2303525764_1552613569786.png"
             },
             new Book
             {
-                Id = 2,
+                Id = Guid.Parse("89c68c41-e015-4bc2-8c03-4fbd7a0f2678"),
                 Title = "Стъкленият трон",
-                AuthorId = 2,
-                GenreId = 1,
-                Description = "Селена Сардотиен е измъкната от затвора на Ендовер и единственият начин да спечели свободата си е да се пребори с най-жестоките мъже за титлата - кралски убиец. Но под красивата външност на Селена се крие боец с убийствени инстинкти. А свободата си струва всяка пролята капка кръв - и собствената и чуждата.",
-                PublisherId = 2,
-                ImageUrl = "https://cdn.ozone.bg/media/catalog/product/s/t/stakleniyat_tron_stakleniyat_tron_1_novo_izdanie_1713431567_0.jpg"
-            },
-            new Book
-            {
-                Id = 3,
-                Title = "Игра на тронове (Песен за огън и лед 1)",
-                AuthorId = 3,
-                GenreId = 1,
-                Description = "Шеметен бяг от скована в жесток студ страна към земи на вечно лято и охолно безгрижие. Сказание за владетели и владетелки, воини и чародеи, наемни убийци и незаконнородени претенденти за власт, появили се във времена на мрачни поличби.",
-                PublisherId = 3,
-                ImageUrl = "https://cdn.ozone.bg/media/catalog/product/i/g/igra-na-tronove-pesen-za-og-n-i-led-1.jpg"
+                AuthorId = Guid.Parse("264a2a30-ec23-4aef-b1cb-8c7a4c9f7fa4"),
+                GenreId = Guid.Parse("e6a6a80b-9eb6-4ce3-92b5-00b5cf9a53db"),
+                PublisherId = Guid.Parse("2a9cd570-96b6-4f52-b56d-137e2c5d5eaf"),
+                Description = "…",
+                ImageUrl = "https://cdn.ozone.bg/media/catalog/product/s/t/stakleniyat_tron_…"
             }
         );
     }

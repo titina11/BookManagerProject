@@ -35,7 +35,7 @@ namespace BookManager.Services.Core
                 .ToListAsync();
         }
 
-        public async Task<BookViewModel?> GetByIdAsync(int id)
+        public async Task<BookViewModel?> GetByIdAsync(Guid id)
         {
             var book = await _context.Books
                 .Include(b => b.Author)
@@ -73,7 +73,7 @@ namespace BookManager.Services.Core
             };
         }
 
-        public async Task<EditBookViewModel?> GetEditModelAsync(int id)
+        public async Task<EditBookViewModel?> GetEditModelAsync(Guid id)
         {
             var book = await _context.Books.FindAsync(id);
             if (book == null) return null;
@@ -115,7 +115,7 @@ namespace BookManager.Services.Core
             await _context.SaveChangesAsync();
         }
 
-        public async Task EditAsync(int id, EditBookViewModel model)
+        public async Task EditAsync(Guid id, EditBookViewModel model)
         {
             var book = await _context.Books.FindAsync(id);
             if (book == null) return;
@@ -130,7 +130,7 @@ namespace BookManager.Services.Core
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             var book = await _context.Books.FindAsync(id);
             if (book == null) return;
