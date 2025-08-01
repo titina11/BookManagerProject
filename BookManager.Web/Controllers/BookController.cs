@@ -20,28 +20,28 @@ namespace BookManager.Web.Controllers
             return View(books);
         }
 
-        //  public async Task<IActionResult> Create()
-        //  {
-        //      var model = await _bookService.GetCreateModelAsync();
-        //      return View(model);
-        //  }
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            var model = await _bookService.GetCreateModelAsync();
+            return View(model);
+        }
 
-        // [HttpPost]
-        // public async Task<IActionResult> Create/(CreateBookViewModel /model)
-        // {
-        //     if (!ModelState.IsValid)
-        //     {
-        //         var filledModel = await //_bookService.GetCreateModelAsync();
-        //         model.Authors = filledModel.Authors;
-        //         model.Genres = filledModel.Genres;
-        //         model.Publishers = filledModel.Publishers;
-        //
-        //         return View(model);
-        //     }
-        //
-        //     await _bookService.CreateAsync(model);
-        //     return RedirectToAction(nameof(Index));
-        // }
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateBookViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.Authors = await _bookService.GetAuthorsAsync();
+                model.Genres = await _bookService.GetGenresAsync();
+                model.Publishers = await _bookService.GetPublishersAsync();
+                return View(model);
+            }
+
+            await _bookService.CreateAsync(model);
+            return RedirectToAction(nameof(All));
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)

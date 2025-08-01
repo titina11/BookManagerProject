@@ -8,6 +8,8 @@ public interface IBookService
 
     Task<EditBookViewModel?> GetEditModelAsync(Guid id);
     Task EditAsync(Guid id, EditBookViewModel model);
+    Task<CreateBookViewModel> GetCreateModelAsync();
+    Task CreateAsync(CreateBookViewModel model);
     Task DeleteAsync(Guid id);
 
     Task<IEnumerable<AuthorDropdownViewModel>> GetAuthorsAsync();

@@ -95,21 +95,15 @@ namespace BookManager.Services.Core
                 .ToListAsync();
         }
 
-       // public async Task<CreateBookViewModel> GetCreateModelAsync()
-       // {
-       //     return new CreateBookViewModel
-       //     {
-       //         Authors = await _context.Authors
-       //             .Select(a => new AuthorDropdownViewModel //{ Id = a.Id, Name = a.Name })
-       //             .ToListAsync(),
-       //         Genres = await _context.Genres
-       //             .Select(g => new GenreDropdownViewModel { //Id = g.Id, Name = g.Name })
-       //             .ToListAsync(),
-       //         Publishers = await /_context.Publishers
-       //             .Select(p => new //PublisherDropdownViewModel { Id = p.Id, Name = /p.Name })
-       //             .ToListAsync()
-       //     };
-       // }
+        public async Task<CreateBookViewModel> GetCreateModelAsync()
+        {
+            return new CreateBookViewModel
+            {
+                Authors = await GetAuthorsAsync(),
+                Genres = await GetGenresAsync(),
+                Publishers = await GetPublishersAsync()
+            };
+        }
 
         public async Task<EditBookViewModel?> GetEditModelAsync(Guid id)
         {
