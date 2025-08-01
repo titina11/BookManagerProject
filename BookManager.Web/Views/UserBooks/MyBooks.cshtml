@@ -1,0 +1,32 @@
+﻿@model IEnumerable<BookManager.ViewModels.UserBooks.UserBookListViewModel>
+
+
+@{
+	ViewData["Title"] = "Дневник";
+}
+
+<h2>Моите прочетени книги</h2>
+
+<table class="table">
+	<thead>
+	<tr>
+		<th>Заглавие</th>
+		<th>Начална дата</th>
+		<th>Крайна дата</th>
+		<th>Прочетени дни</th>
+		<th>Рейтинг</th>
+	</tr>
+	</thead>
+	<tbody>
+	@foreach (var book in Model)
+	{
+		<tr>
+			<td>@book.Title</td>
+			<td>@book.StartDate.ToShortDateString()</td>
+			<td>@book.EndDate.ToShortDateString()</td>
+			<td>@book.DaysRead дни</td>
+			<td>@book.Rating / 5</td>
+		</tr>
+	}
+	</tbody>
+</table>
