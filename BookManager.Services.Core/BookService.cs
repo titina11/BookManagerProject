@@ -57,6 +57,24 @@ namespace BookManager.Services.Core
             };
         }
 
+        public async Task<IEnumerable<BookViewModel>> GetLatestAsync(int count)
+        {
+            return await _context.Books
+                .OrderByDescending(b => b.Id) 
+                .Take(count)
+                .Select(b => new BookViewModel
+                {
+                    Id = b.Id,
+                    Title = b.Title,
+                    Description = b.Description,
+                    ImageUrl = b.ImageUrl,
+                    Author = b.Author.Name,
+                    Genre = b.Genre.Name,
+                    Publisher = b.Publisher.Name
+                })
+                .ToListAsync();
+        }
+
         public async Task<CreateBookViewModel> GetCreateModelAsync()
         {
             return new CreateBookViewModel

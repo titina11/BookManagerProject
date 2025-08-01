@@ -4,16 +4,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookManager.Web.Controllers
 {
-    public class BooksController : Controller
+    public class BookController : Controller
     {
         private readonly IBookService _bookService;
 
-        public BooksController(IBookService bookService)
+        public BookController(IBookService bookService)
         {
             _bookService = bookService;
         }
 
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> All()
         {
             var books = await _bookService.GetAllAsync();
             return View(books);

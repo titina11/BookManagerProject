@@ -1,22 +1,18 @@
 ﻿@model IEnumerable<BookManager.ViewModels.Book.BookViewModel>
 
-
 @{
-	ViewData["Title"] = "Начало";
+	ViewData["Title"] = "Всички книги";
 }
 
-<div class="text-center mb-5">
-	<h1 class="display-4">Добре дошли в BookManager!</h1>
-	<p class="text-muted">📚 Ето най-новите книги в библиотеката:</p>
-</div>
+<h2 class="mb-4">📚 Всички книги в библиотеката</h2>
 
 @if (!Model.Any())
 {
-	<p class="text-muted text-center">Все още няма книги.</p>
+	<p class="text-muted">Няма добавени книги.</p>
 }
 else
 {
-	<div class="row justify-content-center">
+	<div class="row">
 		@foreach (var book in Model)
 		{
 			<div class="col-md-4 mb-4">

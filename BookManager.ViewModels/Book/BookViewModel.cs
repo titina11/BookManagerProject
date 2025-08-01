@@ -15,5 +15,6 @@
         public string Genre { get; set; } = null!;  
 
         public string? ImageUrl { get; set; }
+
     }
 }

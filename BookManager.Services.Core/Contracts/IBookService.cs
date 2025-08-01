@@ -5,6 +5,8 @@ public interface IBookService
     Task<IEnumerable<BookViewModel>> GetAllAsync();
     Task<BookViewModel?> GetByIdAsync(Guid id);
 
+    Task<IEnumerable<BookViewModel>> GetLatestAsync(int count);
+
     Task<CreateBookViewModel> GetCreateModelAsync();
     Task<EditBookViewModel?> GetEditModelAsync(Guid id);
 
