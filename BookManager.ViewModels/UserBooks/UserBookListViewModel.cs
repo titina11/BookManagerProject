@@ -5,6 +5,7 @@ namespace BookManager.ViewModels.UserBooks
 {
     public class UserBookListViewModel
     {
+        public Guid Id { get; set; }
         public Guid BookId { get; set; }
 
         [Required(ErrorMessage = "Моля въведете начална дата")]

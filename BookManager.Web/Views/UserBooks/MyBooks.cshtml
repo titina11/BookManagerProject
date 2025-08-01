@@ -26,6 +26,10 @@
 			<td>@book.EndDate.ToShortDateString()</td>
 			<td>@book.DaysRead дни</td>
 			<td>@book.Rating / 5</td>
+			<td>
+				<a asp-action="Delete" asp-route-id="@book.Id" class="btn btn-danger btn-sm">Изтрий</a>
+			</td>
+
 		</tr>
 	}
 	</tbody>

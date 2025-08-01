@@ -1,0 +1,21 @@
+﻿@model BookManager.ViewModels.UserBooks.ReadBookViewModel
+
+@{
+	ViewData["Title"] = "Изтрий запис";
+}
+
+<h2>Сигурни ли сте, че искате да изтриете този запис?</h2>
+
+<div>
+	<h4>@Model.BookTitle</h4>
+	<p><strong>Дата на начало:</strong> @Model.StartDate.ToShortDateString()</p>
+	<p><strong>Дата на край:</strong> @Model.EndDate.ToShortDateString()</p>
+	<p><strong>Прочетени дни:</strong> @Model.DaysRead</p>
+	<p><strong>Оценка:</strong> @Model.Rating</p>
+</div>
+
+<form asp-action="Delete" method="post">
+	<input type="hidden" asp-for="Id" />
+	<button type="submit" class="btn btn-danger">Изтрий</button>
+	<a asp-action="MyBooks" class="btn btn-secondary">Отказ</a>
+</form>

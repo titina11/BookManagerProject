@@ -76,6 +76,8 @@ namespace BookManager.Controllers
                 .Include(ub => ub.Book)
                 .Select(ub => new UserBookListViewModel
                 {
+                    Id = ub.Id,
+                    BookId = ub.BookId,
                     Title = ub.Book.Title,
                     StartDate = ub.StartDate,
                     EndDate = ub.EndDate,
@@ -84,6 +86,41 @@ namespace BookManager.Controllers
                 .ToListAsync();
 
             return View(books);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var userBook = await _context.UserBooks
+                .Include(ub => ub.Book)
+                .FirstOrDefaultAsync(ub => ub.Id == id);
+
+            if (userBook == null) return NotFound();
+
+            var model = new ReadBookViewModel
+            {
+                Id = userBook.Id,
+                BookTitle = userBook.Book.Title,
+                StartDate = userBook.StartDate,
+                EndDate = userBook.EndDate,
+                Rating = userBook.Rating
+            };
+
+            return View(model);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userBook = await _context.UserBooks.FirstOrDefaultAsync(ub => ub.Id == id && ub.UserId == userId);
+
+            if (userBook == null) return NotFound();
+
+            _context.UserBooks.Remove(userBook);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(MyBooks));
         }
     }
 }
