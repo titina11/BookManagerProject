@@ -1,4 +1,5 @@
 ﻿using BookManager.ViewModels.Book;
+using BookManager.ViewModels.Books;
 
 public interface IBookService
 {
@@ -11,6 +12,8 @@ public interface IBookService
     Task<CreateBookViewModel> GetCreateModelAsync();
     Task CreateAsync(CreateBookViewModel model);
     Task<BookViewModel?> GetDetailsByIdAsync(Guid id);
+
+    Task<BookFilterViewModel> GetFilteredAsync(string? title, Guid? authorId, Guid? genreId, Guid? publisherId);
 
     Task DeleteAsync(Guid id);
 

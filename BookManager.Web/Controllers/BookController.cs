@@ -14,11 +14,12 @@ namespace BookManager.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> All()
+        public async Task<IActionResult> All(string? title, Guid? authorId, Guid? genreId, Guid? publisherId)
         {
-            var books = await _bookService.GetAllAsync();
-            return View(books);
+            var model = await _bookService.GetFilteredAsync(title, authorId, genreId, publisherId);
+            return View(model);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Create()

@@ -1,43 +1,91 @@
-﻿@model IEnumerable<BookManager.ViewModels.Book.BookViewModel>
+﻿@model BookManager.ViewModels.Books.BookFilterViewModel
+
 @{
-	ViewData["Title"] = "Всички книги";
+    ViewData["Title"] = "Всички книги";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-	<h2>📚 Всички книги</h2>
-	<a asp-controller="Book" asp-action="Create" class="btn btn-success">➕ Добави нова книга</a>
-</div>
+<h2>@ViewData["Title"]</h2>
 
-@if (!Model.Any())
+<a asp-controller="Book" asp-action="Create" class="btn btn-success mb-3">➕ Добави нова книга</a>
+
+<form method="get" asp-controller="Book" asp-action="All" class="mb-4">
+	<div class="row g-2">
+	<div class="col-md-4">
+		<input type="text" name="title" value="@Model.SearchTitle" placeholder="Търси по заглавие…" class="form-control" />
+	</div>
+
+    <div class="col-md-3">
+        <select name="authorId" class="form-select">
+            <option value="">-- Автор --</option>
+            @foreach (var author in Model.Authors)
+            {
+                <option value="@author.Id"
+                        selected="@(Model.SelectedAuthorId == author.Id ? "selected" : null)">
+                    @author.Name
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <select name="genreId" class="form-select">
+            <option value="">-- Жанр --</option>
+            @foreach (var genre in Model.Genres)
+            {
+                <option value="@genre.Id"
+                        selected="@(Model.SelectedGenreId == genre.Id ? "selected" : null)">
+                    @genre.Name
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <select name="publisherId" class="form-select">
+            <option value="">-- Издателство --</option>
+            @foreach (var publisher in Model.Publishers)
+            {
+                <option value="@publisher.Id"
+                        selected="@(Model.SelectedPublisherId == publisher.Id ? "selected" : null)">
+                    @publisher.Name
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Филтрирай</button>
+    </div>
+</form>
+
+@if (!Model.Books.Any())
 {
-	<p class="text-muted">Няма налични книги.</p>
+    <p class="text-muted">Няма налични книги.</p>
 }
 else
 {
-	<div class="row">
-		@foreach (var book in Model)
-		{
-			<div class="col-md-4 mb-4">
-				<div class="card h-100">
-					<img src="@book.ImageUrl" class="card-img-top" alt="@book.Title" style="height: 250px; object-fit: cover;">
-					<div class="card-body">
-						<h5 class="card-title">@book.Title</h5>
-						<p class="card-text"><strong>Автор:</strong> @book.Author</p>
-						<p class="card-text"><strong>Жанр:</strong> @book.Genre</p>
-						<p class="card-text"><strong>Издателство:</strong> @book.Publisher</p>
-						<p class="card-text">@book.Description?.Substring(0, Math.Min(book.Description.Length, 100))...</p>
-
-						<div class="d-flex justify-content-between mt-3">
-							<a asp-controller="Book" asp-action="Edit" asp-route-id="@book.Id" class="btn btn-outline-primary btn-sm">Редактирай</a>
-							<a asp-action="Details" asp-route-id="@book.Id" asp-route-returnUrl="/Book/All" class="btn btn-outline-info  btn-sm">Детайли</a>
-							<a asp-controller="UserBooks" asp-action="Add" asp-route-bookId="@book.Id" class="btn btn-sm btn-outline-success">
-								Добави в дневника
-							</a>
-							<a asp-controller="Book" asp-action="Delete" asp-route-id="@book.Id" class="btn btn-outline-danger btn-sm">Изтрий</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		}
-	</div>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var book in Model.Books)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <img src="@book.ImageUrl" class="card-img-top" alt="@book.Title" style="height: 300px; object-fit: cover;" />
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">@book.Title</h5>
+                        <p class="card-text">
+                            <strong>Автор:</strong> @book.Author<br />
+                            <strong>Жанр:</strong> @book.Genre<br />
+                            <strong>Издателство:</strong> @book.Publisher
+                        </p>
+                        <div class="mt-auto">
+	                        <a asp-controller="Book" asp-action="Edit" asp-route-id="@book.Id" class="btn btn-sm btn-outline-warning me-1">Редактирай</a>
+	                        <a asp-controller="Book" asp-action="Details" asp-route-id="@book.Id" class="btn btn-sm btn-outline-primary me-1">Детайли</a>
+	                        <a asp-controller="UserBooks" asp-action="Add" asp-route-bookId="@book.Id" class="btn btn-sm btn-outline-success me-1">Добави в дневника</a>
+	                        <a asp-controller="Book" asp-action="Delete" asp-route-id="@book.Id" class="btn btn-sm btn-outline-danger">Изтрий</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 }

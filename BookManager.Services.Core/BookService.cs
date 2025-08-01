@@ -2,6 +2,7 @@
 using BookManager.Data.Models;
 using BookManager.Services.Core;
 using BookManager.ViewModels.Book;
+using BookManager.ViewModels.Books;
 using BookManager.Web.Areas.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -230,6 +231,62 @@ namespace BookManager.Services.Core
                 ImageUrl = book.ImageUrl
             };
         }
+
+        public async Task<BookFilterViewModel> GetFilteredAsync(string? title, Guid? authorId, Guid? genreId, Guid? publisherId)
+        {
+            var query = _context.Books
+                .Include(b => b.Author)
+                .Include(b => b.Genre)
+                .Include(b => b.Publisher)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                query = query.Where(b => b.Title.ToLower().Contains(title.ToLower()));
+            }
+
+            if (authorId.HasValue && authorId != Guid.Empty)
+            {
+                query = query.Where(b => b.AuthorId == authorId);
+            }
+
+            if (genreId.HasValue && genreId != Guid.Empty)
+            {
+                query = query.Where(b => b.GenreId == genreId);
+            }
+
+            if (publisherId.HasValue && publisherId != Guid.Empty)
+            {
+                query = query.Where(b => b.PublisherId == publisherId);
+            }
+
+            var books = await query
+                .OrderBy(b => b.Title)
+                .Select(b => new BookViewModel
+                {
+                    Id = b.Id,
+                    Title = b.Title,
+                    Description = b.Description,
+                    Author = b.Author.Name,
+                    Genre = b.Genre.Name,
+                    Publisher = b.Publisher.Name,
+                    ImageUrl = b.ImageUrl
+                })
+                .ToListAsync();
+
+            return new BookFilterViewModel
+            {
+                SearchTitle = title,
+                SelectedAuthorId = authorId,
+                SelectedGenreId = genreId,
+                SelectedPublisherId = publisherId,
+                Authors = await GetAuthorsAsync(),
+                Genres = await GetGenresAsync(),
+                Publishers = await GetPublishersAsync(),
+                Books = books
+            };
+        }
+
 
         public async Task DeleteAsync(Guid id)
         {
