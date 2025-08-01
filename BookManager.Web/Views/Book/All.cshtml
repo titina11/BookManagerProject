@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<BookManager.ViewModels.Book.BookViewModel>
 
+
 @{
 	ViewData["Title"] = "Всички книги";
 }
@@ -24,7 +25,8 @@ else
 						<p class="card-text"><strong>Жанр:</strong> @book.Genre</p>
 						<p class="card-text"><strong>Издателство:</strong> @book.Publisher</p>
 						<p class="card-text">@book.Description?.Substring(0, Math.Min(book.Description.Length, 100))...</p>
-						<a asp-controller="Book" asp-action="Edit" asp-route-id="@book.Id" class="btn btn-outline-primary mt-2">Редактирай</a>
+						<a asp-action="Edit" asp-route-id="@book.Id" class="btn btn-sm btn-outline-primary">✏️ Редактирай</a>
+						<a asp-action="Delete" asp-route-id="@book.Id" class="btn btn-sm btn-outline-danger">🗑️ Изтрий</a>
 					</div>
 				</div>
 			</div>

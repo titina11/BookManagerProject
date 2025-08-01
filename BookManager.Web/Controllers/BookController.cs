@@ -20,54 +20,52 @@ namespace BookManager.Web.Controllers
             return View(books);
         }
 
-        public async Task<IActionResult> Create()
-        {
-            var model = await _bookService.GetCreateModelAsync();
-            return View(model);
-        }
+        //  public async Task<IActionResult> Create()
+        //  {
+        //      var model = await _bookService.GetCreateModelAsync();
+        //      return View(model);
+        //  }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(CreateBookViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                var filledModel = await _bookService.GetCreateModelAsync();
-                model.Authors = filledModel.Authors;
-                model.Genres = filledModel.Genres;
-                model.Publishers = filledModel.Publishers;
+        // [HttpPost]
+        // public async Task<IActionResult> Create/(CreateBookViewModel /model)
+        // {
+        //     if (!ModelState.IsValid)
+        //     {
+        //         var filledModel = await //_bookService.GetCreateModelAsync();
+        //         model.Authors = filledModel.Authors;
+        //         model.Genres = filledModel.Genres;
+        //         model.Publishers = filledModel.Publishers;
+        //
+        //         return View(model);
+        //     }
+        //
+        //     await _bookService.CreateAsync(model);
+        //     return RedirectToAction(nameof(Index));
+        // }
 
-                return View(model);
-            }
-
-            await _bookService.CreateAsync(model);
-            return RedirectToAction(nameof(Index));
-        }
-
+        [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
             var model = await _bookService.GetEditModelAsync(id);
             if (model == null) return NotFound();
 
-            return View(model);
+            return View(model); 
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Edit(Guid id, EditBookViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                var filledModel = await _bookService.GetEditModelAsync(id);
-                if (filledModel == null) return NotFound();
-
-                model.Authors = filledModel.Authors;
-                model.Genres = filledModel.Genres;
-                model.Publishers = filledModel.Publishers;
-
-                return View(model);
+                model.Authors = await _bookService.GetAuthorsAsync();
+                model.Genres = await _bookService.GetGenresAsync();
+                model.Publishers = await _bookService.GetPublishersAsync();
+                return View("All", model);
             }
 
             await _bookService.EditAsync(id, model);
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(All));
         }
 
         public async Task<IActionResult> Delete(Guid id)
@@ -79,10 +77,10 @@ namespace BookManager.Web.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> ConfirmDelete(Guid id)
         {
             await _bookService.DeleteAsync(id);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(All));
         }
     }
 }

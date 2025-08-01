@@ -4,6 +4,8 @@ using BookManager.Services.Core.Contracts;
 using BookManager.ViewModels.Book;
 using BookManager.Web.Areas.Identity.Data;
 using Microsoft.EntityFrameworkCore;
+using BookManager.ViewModels.Book;
+
 
 namespace BookManager.Services.Core
 {
@@ -57,11 +59,29 @@ namespace BookManager.Services.Core
             };
         }
 
+        public async Task UpdateAsync(BookFormModel model)
+        {
+            var book = await _context.Books.FindAsync(model.Id);
+            if (book == null) return;
+
+            book.Title = model.Title;
+            book.Description = model.Description;
+            book.ImageUrl = model.ImageUrl;
+            book.AuthorId = model.AuthorId;
+            book.GenreId = model.GenreId;
+            book.PublisherId = model.PublisherId;
+
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<BookViewModel>> GetLatestAsync(int count)
         {
             return await _context.Books
                 .OrderByDescending(b => b.Id) 
                 .Take(count)
+                .Include(b => b.Author)
+                .Include(b => b.Genre)
+                .Include(b => b.Publisher)
                 .Select(b => new BookViewModel
                 {
                     Id = b.Id,
@@ -75,21 +95,21 @@ namespace BookManager.Services.Core
                 .ToListAsync();
         }
 
-        public async Task<CreateBookViewModel> GetCreateModelAsync()
-        {
-            return new CreateBookViewModel
-            {
-                Authors = await _context.Authors
-                    .Select(a => new AuthorDropdownViewModel { Id = a.Id, Name = a.Name })
-                    .ToListAsync(),
-                Genres = await _context.Genres
-                    .Select(g => new GenreDropdownViewModel { Id = g.Id, Name = g.Name })
-                    .ToListAsync(),
-                Publishers = await _context.Publishers
-                    .Select(p => new PublisherDropdownViewModel { Id = p.Id, Name = p.Name })
-                    .ToListAsync()
-            };
-        }
+       // public async Task<CreateBookViewModel> GetCreateModelAsync()
+       // {
+       //     return new CreateBookViewModel
+       //     {
+       //         Authors = await _context.Authors
+       //             .Select(a => new AuthorDropdownViewModel //{ Id = a.Id, Name = a.Name })
+       //             .ToListAsync(),
+       //         Genres = await _context.Genres
+       //             .Select(g => new GenreDropdownViewModel { //Id = g.Id, Name = g.Name })
+       //             .ToListAsync(),
+       //         Publishers = await /_context.Publishers
+       //             .Select(p => new //PublisherDropdownViewModel { Id = p.Id, Name = /p.Name })
+       //             .ToListAsync()
+       //     };
+       // }
 
         public async Task<EditBookViewModel?> GetEditModelAsync(Guid id)
         {
@@ -101,20 +121,50 @@ namespace BookManager.Services.Core
                 Id = book.Id,
                 Title = book.Title,
                 Description = book.Description,
+                ImageUrl = book.ImageUrl,
                 AuthorId = book.AuthorId,
                 GenreId = book.GenreId,
                 PublisherId = book.PublisherId,
-                ImageUrl = book.ImageUrl,
-                Authors = await _context.Authors
-                    .Select(a => new AuthorDropdownViewModel { Id = a.Id, Name = a.Name })
-                    .ToListAsync(),
-                Genres = await _context.Genres
-                    .Select(g => new GenreDropdownViewModel { Id = g.Id, Name = g.Name })
-                    .ToListAsync(),
-                Publishers = await _context.Publishers
-                    .Select(p => new PublisherDropdownViewModel { Id = p.Id, Name = p.Name })
-                    .ToListAsync()
+                Authors = await GetAuthorsAsync(),
+                Genres = await GetGenresAsync(),
+                Publishers = await GetPublishersAsync()
             };
+        }
+
+        public async Task EditAsync(Guid id, EditBookViewModel model)
+        {
+            var book = await _context.Books.FindAsync(id);
+            if (book == null) return;
+
+            book.Title = model.Title;
+            book.Description = model.Description;
+            book.ImageUrl = model.ImageUrl;
+            book.AuthorId = model.AuthorId;
+            book.GenreId = model.GenreId;
+            book.PublisherId = model.PublisherId;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<AuthorDropdownViewModel>> GetAuthorsAsync()
+        {
+            return await _context.Authors
+                .Select(a => new AuthorDropdownViewModel { Id = a.Id, Name = a.Name })
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<GenreDropdownViewModel>> GetGenresAsync()
+        {
+            return await _context.Genres
+                .Select(g => new GenreDropdownViewModel { Id = g.Id, Name = g.Name })
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<PublisherDropdownViewModel>> GetPublishersAsync()
+        {
+            return await _context.Publishers
+                .Select(p => new PublisherDropdownViewModel { Id = p.Id, Name = p.Name })
+                .ToListAsync();
         }
 
         public async Task CreateAsync(CreateBookViewModel model)
@@ -130,21 +180,6 @@ namespace BookManager.Services.Core
             };
 
             _context.Books.Add(book);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task EditAsync(Guid id, EditBookViewModel model)
-        {
-            var book = await _context.Books.FindAsync(id);
-            if (book == null) return;
-
-            book.Title = model.Title;
-            book.Description = model.Description;
-            book.AuthorId = model.AuthorId;
-            book.GenreId = model.GenreId;
-            book.PublisherId = model.PublisherId;
-            book.ImageUrl = model.ImageUrl;
-
             await _context.SaveChangesAsync();
         }
 

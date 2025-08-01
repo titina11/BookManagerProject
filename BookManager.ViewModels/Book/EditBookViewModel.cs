@@ -4,23 +4,29 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BookManager.ViewModels.Book
 {
-    public class CreateBookViewModel
+    public class EditBookViewModel
     {
+        public Guid Id { get; set; }
+
         [Required]
         public string Title { get; set; } = null!;
 
         [Required]
         public string Description { get; set; } = null!;
 
+        [Display(Name = "Изображение (URL)")]
         public string? ImageUrl { get; set; }
 
         [Required]
+        [Display(Name = "Автор")]
         public Guid AuthorId { get; set; }
 
         [Required]
+        [Display(Name = "Жанр")]
         public Guid GenreId { get; set; }
 
         [Required]
+        [Display(Name = "Издателство")]
         public Guid PublisherId { get; set; }
 
         public IEnumerable<AuthorDropdownViewModel> Authors { get; set; } = new List<AuthorDropdownViewModel>();

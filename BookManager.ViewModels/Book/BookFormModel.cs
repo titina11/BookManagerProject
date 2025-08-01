@@ -1,26 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-
-namespace BookManager.ViewModels.Book
+﻿namespace BookManager.ViewModels.Book
 {
-    public class CreateBookViewModel
+    public class BookFormModel
     {
-        [Required]
+        public Guid Id { get; set; }
+
         public string Title { get; set; } = null!;
 
-        [Required]
         public string Description { get; set; } = null!;
 
         public string? ImageUrl { get; set; }
 
-        [Required]
         public Guid AuthorId { get; set; }
-
-        [Required]
         public Guid GenreId { get; set; }
-
-        [Required]
         public Guid PublisherId { get; set; }
 
         public IEnumerable<AuthorDropdownViewModel> Authors { get; set; } = new List<AuthorDropdownViewModel>();

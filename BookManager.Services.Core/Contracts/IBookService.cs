@@ -4,14 +4,13 @@ public interface IBookService
 {
     Task<IEnumerable<BookViewModel>> GetAllAsync();
     Task<BookViewModel?> GetByIdAsync(Guid id);
-
     Task<IEnumerable<BookViewModel>> GetLatestAsync(int count);
 
-    Task<CreateBookViewModel> GetCreateModelAsync();
     Task<EditBookViewModel?> GetEditModelAsync(Guid id);
-
-    Task CreateAsync(CreateBookViewModel model);
     Task EditAsync(Guid id, EditBookViewModel model);
-
     Task DeleteAsync(Guid id);
+
+    Task<IEnumerable<AuthorDropdownViewModel>> GetAuthorsAsync();
+    Task<IEnumerable<GenreDropdownViewModel>> GetGenresAsync();
+    Task<IEnumerable<PublisherDropdownViewModel>> GetPublishersAsync();
 }
