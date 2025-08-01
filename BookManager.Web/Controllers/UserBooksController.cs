@@ -80,7 +80,6 @@ namespace BookManager.Controllers
                     StartDate = ub.StartDate,
                     EndDate = ub.EndDate,
                     Rating = ub.Rating,
-                    DaysRead = (ub.EndDate - ub.StartDate).Days
                 })
                 .ToListAsync();
 

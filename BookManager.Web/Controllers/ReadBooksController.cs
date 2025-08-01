@@ -3,6 +3,7 @@ using BookManager.ViewModels.Read;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 [Authorize]
 public class ReadBooksController : Controller
@@ -20,7 +21,11 @@ public class ReadBooksController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var userId = _userManager.GetUserId(User);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized(); 
+        }
         var model = await _readBookService.GetByUserAsync(userId);
         return View(model);
     }
@@ -45,7 +50,11 @@ public class ReadBooksController : Controller
             return View(model);
         }
 
-        var userId = _userManager.GetUserId(User);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
         await _readBookService.AddAsync(userId, model);
         return RedirectToAction(nameof(Index));
     }

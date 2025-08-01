@@ -7,21 +7,20 @@ namespace BookManager.ViewModels.UserBooks
     {
         public Guid BookId { get; set; }
 
-        public string Title { get; set; } = null!;
-
+        [Required(ErrorMessage = "Моля въведете начална дата")]
         [DataType(DataType.Date)]
-        [Display(Name = "Начална дата")]
         public DateTime StartDate { get; set; }
 
+        [Required(ErrorMessage = "Моля въведете крайна дата")]
         [DataType(DataType.Date)]
-        [Display(Name = "Крайна дата")]
         public DateTime EndDate { get; set; }
 
-        [Range(1, 5)]
-        [Display(Name = "Рейтинг (1–5)")]
+        [Range(1, 5, ErrorMessage = "Рейтингът трябва да е между 1 и 5")]
         public int Rating { get; set; }
 
-        [Display(Name = "Дни четене")]
-        public int DaysRead { get; set; }
+        public string? Title { get; set; }
+
+        public int DaysRead => (EndDate - StartDate).Days;
+
     }
 }
