@@ -79,7 +79,7 @@ else
                         </p>
                         <div class="mt-auto">
 	                        <a asp-controller="Book" asp-action="Edit" asp-route-id="@book.Id" class="btn btn-sm btn-outline-warning me-1">Редактирай</a>
-	                        <a asp-controller="Book" asp-action="Details" asp-route-id="@book.Id" class="btn btn-sm btn-outline-primary me-1">Детайли</a>
+                            <a asp-controller="Book" asp-action="Details" asp-route-id="@book.Id" asp-route-returnUrl="/Book/All" class="btn btn-sm btn-outline-primary me-1">Детайли</a>
 	                        <a asp-controller="UserBooks" asp-action="Add" asp-route-bookId="@book.Id" class="btn btn-sm btn-outline-success me-1">Добави в дневника</a>
 	                        <a asp-controller="Book" asp-action="Delete" asp-route-id="@book.Id" class="btn btn-sm btn-outline-danger">Изтрий</a>
                         </div>
