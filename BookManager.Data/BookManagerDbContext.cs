@@ -19,7 +19,8 @@ public class BookManagerDbContext : IdentityDbContext<ApplicationUser>
     public virtual DbSet<Genre> Genres => Set<Genre>();
     public virtual DbSet<Publisher> Publishers => Set<Publisher>();
     public virtual DbSet<Review> Reviews => Set<Review>();
-    public DbSet<UserBook> UserBooks { get; set; }
+
+    public virtual DbSet<UserBook> UserBooks { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
 

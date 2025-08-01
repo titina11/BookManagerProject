@@ -1,4 +1,4 @@
-﻿using BookManager.Services.Core.Contracts;
+﻿using BookManager.Services.Core;
 using BookManager.ViewModels.Book;
 using Microsoft.AspNetCore.Mvc;
 
@@ -69,8 +69,10 @@ namespace BookManager.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Details(Guid id)
+        public async Task<IActionResult> Details(Guid id, string? returnUrl)
         {
+            ViewBag.ReturnUrl = returnUrl ?? "Books";
+
             var model = await _bookService.GetDetailsByIdAsync(id);
             if (model == null)
             {

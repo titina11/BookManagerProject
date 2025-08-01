@@ -1,0 +1,17 @@
+﻿@model BookManager.ViewModels.Author.AuthorListViewModel
+
+@{
+	ViewData["Title"] = "Добави автор";
+}
+
+<h2 class="mb-4">Добави нов автор</h2>
+
+<form asp-action="Create" method="post">
+	<div class="form-group">
+		<label asp-for="Name" class="form-label"></label>
+		<input asp-for="Name" class="form-control" />
+		<span asp-validation-for="Name" class="text-danger"></span>
+	</div>
+
+	<button type="submit" class="btn btn-primary mt-3">Запази</button>
+</form>

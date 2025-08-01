@@ -1,7 +1,6 @@
 using BookManager.Data;
 using BookManager.Data.Models;
 using BookManager.Services.Core;
-using BookManager.Services.Core.Contracts;
 using BookManager.Web.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +24,8 @@ builder.Services.AddControllersWithViews()
 
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
+builder.Services.AddScoped<IAuthorBookService, AuthorBookService>();
+
 
 
 var app = builder.Build();

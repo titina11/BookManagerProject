@@ -1,6 +1,11 @@
-﻿namespace BookManager.ViewModels.Author;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class CreateAuthorViewModel
+namespace BookManager.ViewModels.Authors
 {
-    public string Name { get; set; } = null!;
+    public class CreateAuthorViewModel
+    {
+        [Required]
+        [StringLength(100, MinimumLength = 2)]
+        public string Name { get; set; } = null!;
+    }
 }

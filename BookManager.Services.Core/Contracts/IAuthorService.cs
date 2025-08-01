@@ -1,19 +1,16 @@
-﻿using BookManager.ViewModels.Author;
+﻿
+using BookManager.ViewModels.Author;
+using BookManager.ViewModels.Authors;
 
-namespace BookManager.Services.Core.Contracts
+
+public interface IAuthorService
 {
-    public interface IAuthorService
-    {
-        Task<IEnumerable<AuthorViewModel>> GetAllAsync();
+    Task<IEnumerable<AuthorListViewModel>> GetAllAsync();
 
-        Task<AuthorViewModel?> GetByIdAsync(Guid id);
+    Task<AddBookToAuthorViewModel> GetAddBookModelAsync(Guid authorId);
 
-        Task CreateAsync(CreateAuthorViewModel model);
+    Task AddBookToAuthorAsync(AddBookToAuthorViewModel model);
 
-        Task EditAsync(Guid id, EditAuthorViewModel model);
+    Task CreateAsync(CreateAuthorViewModel model);
 
-        Task DeleteAsync(Guid id);
-
-        Task<DeleteAuthorViewModel?> GetDeleteByIdAsync(Guid id);
-    }
 }

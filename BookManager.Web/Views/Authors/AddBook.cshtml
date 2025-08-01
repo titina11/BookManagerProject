@@ -1,0 +1,27 @@
+﻿@model BookManager.ViewModels.Authors.AddBookToAuthorViewModel
+
+@{
+	ViewData["Title"] = "Добави книга към автор";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="AddBook" method="post">
+	<input type="hidden" asp-for="AuthorId" />
+
+	<div class="form-group">
+		<label asp-for="SelectedBookId" class="control-label">Избери книга</label>
+		<select asp-for="SelectedBookId" class="form-control" asp-items="@(new SelectList(Model.Books, "Id", "Title"))">
+			<option value="">-- Моля, изберете книга --</option>
+		</select>
+		<span asp-validation-for="SelectedBookId" class="text-danger"></span>
+	</div>
+
+	<br />
+	<button type="submit" class="btn btn-primary">Запази</button>
+	<a asp-action="All" class="btn btn-secondary">Отказ</a>
+</form>
+
+@section Scripts {
+	@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

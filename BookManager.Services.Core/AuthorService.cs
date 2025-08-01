@@ -1,85 +1,69 @@
 ﻿using BookManager.Data;
 using BookManager.Data.Models;
-using BookManager.Services.Core.Contracts;
 using BookManager.ViewModels.Author;
+using BookManager.ViewModels.Authors;
+using BookManager.ViewModels.Book;
 using BookManager.Web.Areas.Identity.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookManager.Services.Core
+public class AuthorService : IAuthorService
 {
-    public class AuthorService : IAuthorService
+    private readonly BookManagerDbContext _context;
+
+    public AuthorService(BookManagerDbContext context)
     {
-        private readonly BookManagerDbContext _context;
+        _context = context;
+    }
 
-        public AuthorService(BookManagerDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<IEnumerable<AuthorViewModel>> GetAllAsync()
-        {
-            return await _context.Authors
-                .Select(a => new AuthorViewModel
-                {
-                    Id = a.Id,
-                    Name = a.Name
-                })
-                .ToListAsync();
-        }
-
-        public async Task<AuthorViewModel?> GetByIdAsync(Guid id)
-        {
-            var author = await _context.Authors.FindAsync(id);
-            if (author == null) return null;
-
-            return new AuthorViewModel
+    public async Task<IEnumerable<AuthorListViewModel>> GetAllAsync()
+    {
+        return await _context.Authors
+            .Include(a => a.Books)
+            .Select(a => new AuthorListViewModel
             {
-                Id = author.Id,
-                Name = author.Name
-            };
-        }
-
-        public async Task CreateAsync(CreateAuthorViewModel model)
-        {
-            var author = new Author
+                Id = a.Id,
+                Name = a.Name,
+                Books = a.Books
+                    .Select(b => new BookShortViewModel
+                    {
+                        Id = b.Id,
+                        Title = b.Title
+                    }).ToList()
+            })
+            .ToListAsync();
+    }
+    public async Task<AddBookToAuthorViewModel> GetAddBookModelAsync(Guid authorId)
+    {
+        var books = await _context.Books
+            .Where(b => b.AuthorId != authorId)
+            .Select(b => new BookDropdownViewModel
             {
-                Id = Guid.NewGuid(), 
-                Name = model.Name
-            };
+                Id = b.Id,
+                Title = b.Title
+            })
+            .ToListAsync();
 
-            _context.Authors.Add(author);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task EditAsync(Guid id, EditAuthorViewModel model)
+        return new AddBookToAuthorViewModel
         {
-            var author = await _context.Authors.FindAsync(id);
-            if (author == null) return;
+            AuthorId = authorId,
+            Books = books
+        };
+    }
 
-            author.Name = model.Name;
+    public async Task AddBookToAuthorAsync(AddBookToAuthorViewModel model)
+    {
+        var book = await _context.Books.FindAsync(model.SelectedBookId);
+        if (book == null) return;
 
-            await _context.SaveChangesAsync();
-        }
+        book.AuthorId = model.AuthorId;
+        await _context.SaveChangesAsync();
+    }
 
-        public async Task DeleteAsync(Guid id)
-        {
-            var author = await _context.Authors.FindAsync(id);
-            if (author == null) return;
-
-            _context.Authors.Remove(author);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<DeleteAuthorViewModel?> GetDeleteByIdAsync(Guid id)
-        {
-            return await _context.Authors
-                .Where(a => a.Id == id)
-                .Select(a => new DeleteAuthorViewModel
-                {
-                    Id = a.Id,
-                    Name = a.Name
-                })
-                .FirstOrDefaultAsync();
-        }
+    public async Task CreateAsync(CreateAuthorViewModel model)
+    {
+        var author = new Author { Id = Guid.NewGuid(), Name = model.Name };
+        _context.Authors.Add(author);
+        await _context.SaveChangesAsync();
     }
 }

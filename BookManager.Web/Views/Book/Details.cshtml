@@ -2,6 +2,7 @@
 
 @{
 	ViewData["Title"] = "Детайли за книгата";
+	var returnUrl = ViewBag.ReturnUrl as string ?? Url.Action("All", "Book");
 }
 
 <h2>@Model.Title</h2>
@@ -17,6 +18,6 @@
 		<p><strong>Описание:</strong></p>
 		<p>@Model.Description</p>
 
-		<a asp-action="All" class="btn btn-secondary">⬅ Назад</a>
+		<a href="@returnUrl" class="btn btn-secondary">⬅ Назад</a>
 	</div>
 </div>

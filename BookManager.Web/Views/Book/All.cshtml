@@ -28,12 +28,12 @@ else
 						<p class="card-text">@book.Description?.Substring(0, Math.Min(book.Description.Length, 100))...</p>
 
 						<div class="d-flex justify-content-between mt-3">
-							<a asp-controller="Book" asp-action="Edit" asp-route-id="@book.Id" class="btn btn-outline-primary btn-sm">✏️ Редактирай</a>
-							<a asp-action="Details" asp-route-id="@book.Id" class="btn btn-outline-info mt-2">Детайли</a>
+							<a asp-controller="Book" asp-action="Edit" asp-route-id="@book.Id" class="btn btn-outline-primary btn-sm">Редактирай</a>
+							<a asp-action="Details" asp-route-id="@book.Id" asp-route-returnUrl="/Book/All" class="btn btn-outline-info  btn-sm">Детайли</a>
 							<a asp-controller="UserBooks" asp-action="Add" asp-route-bookId="@book.Id" class="btn btn-sm btn-outline-success">
-								📚 Добави в дневника
+								Добави в дневника
 							</a>
-							<a asp-controller="Book" asp-action="Delete" asp-route-id="@book.Id" class="btn btn-outline-danger btn-sm">🗑️ Изтрий</a>
+							<a asp-controller="Book" asp-action="Delete" asp-route-id="@book.Id" class="btn btn-outline-danger btn-sm">Изтрий</a>
 						</div>
 					</div>
 				</div>

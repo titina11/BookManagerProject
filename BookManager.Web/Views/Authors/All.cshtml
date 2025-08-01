@@ -1,0 +1,40 @@
+﻿@model IEnumerable<BookManager.ViewModels.Author.AuthorListViewModel>
+
+@{
+	ViewData["Title"] = "Автори";
+}
+
+<h2 class="text-center mb-4">Списък с автори</h2>
+
+<div class="row">
+	@foreach (var author in Model)
+	{
+		<div class="col-md-6 mb-4">
+			<div class="card shadow-sm">
+				<div class="card-body">
+					<h4 class="card-title">@author.Name</h4>
+
+					@if (author.Books.Any())
+					{
+						<ul class="list-group list-group-flush mb-3">
+							@foreach (var book in author.Books)
+							{
+								<li class="list-group-item d-flex justify-content-between align-items-center">
+									<span>@book.Title</span>
+									<a asp-controller="Book" asp-action="Details" asp-route-id="@book.Id" asp-route-returnUrl="/Authors/All">Виж книгата</a>
+								</li>
+							}
+						</ul>
+					}
+					else
+					{
+						<p class="text-muted">Няма въведени книги.</p>
+					}
+
+					<a asp-controller="Authors" asp-action="AddBook" asp-route-authorId="@author.Id"
+					   class="btn btn-success w-100">Добави книга</a>
+				</div>
+			</div>
+		</div>
+	}
+</div>
