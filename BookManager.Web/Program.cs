@@ -1,4 +1,5 @@
 using BookManager.Data;
+using BookManager.Data.Models;
 using BookManager.Services.Core;
 using BookManager.Services.Core.Contracts;
 using BookManager.Web.Areas.Identity.Data;
@@ -14,7 +15,10 @@ builder.Services.AddDbContext<BookManagerDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = false;
+    })
     .AddEntityFrameworkStores<BookManagerDbContext>();
 builder.Services.AddControllersWithViews();
 
