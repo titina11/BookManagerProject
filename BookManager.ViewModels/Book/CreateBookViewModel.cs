@@ -1,27 +1,36 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BookManager.ViewModels.Book
+namespace BookManager.ViewModels.Book;
+
+public class CreateBookViewModel
 {
-    public class CreateBookViewModel
-    {
-        public Guid AuthorId { get; set; }
+    [Display(Name = "Автор")]
+    public Guid? AuthorId { get; set; }
 
-        public Guid GenreId { get; set; }
+    [Display(Name = "Жанр")]
+    public Guid? GenreId { get; set; }
 
-        public Guid PublisherId { get; set; }
+    [Display(Name = "Издателство")]
+    public Guid? PublisherId { get; set; }
 
-        [Required]
-        public string Title { get; set; } = null!;
+    [Display(Name = "Нов автор (ако не е в списъка)")]
+    public string? NewAuthorName { get; set; }
 
-        [Required]
-        public string Description { get; set; } = null!;
+    [Display(Name = "Нов жанр (ако не е в списъка)")]
+    public string? NewGenreName { get; set; }
 
-        public string? ImageUrl { get; set; }
+    [Display(Name = "Ново издателство (ако не е в списъка)")]
+    public string? NewPublisherName { get; set; }
 
-        public IEnumerable<AuthorDropdownViewModel> Authors { get; set; } = new List<AuthorDropdownViewModel>();
+    [Required]
+    public string Title { get; set; } = null!;
 
-        public IEnumerable<GenreDropdownViewModel> Genres { get; set; } = new List<GenreDropdownViewModel>();
+    [Required]
+    public string Description { get; set; } = null!;
 
-        public IEnumerable<PublisherDropdownViewModel> Publishers { get; set; } = new List<PublisherDropdownViewModel>();
-    }
+    public string? ImageUrl { get; set; }
+
+    public List<AuthorDropdownViewModel> Authors { get; set; } = new();
+    public List<GenreDropdownViewModel> Genres { get; set; } = new();
+    public List<PublisherDropdownViewModel> Publishers { get; set; } = new();
 }

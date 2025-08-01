@@ -12,7 +12,7 @@ public interface IBookService
     Task CreateAsync(CreateBookViewModel model);
     Task DeleteAsync(Guid id);
 
-    Task<IEnumerable<AuthorDropdownViewModel>> GetAuthorsAsync();
-    Task<IEnumerable<GenreDropdownViewModel>> GetGenresAsync();
-    Task<IEnumerable<PublisherDropdownViewModel>> GetPublishersAsync();
+    Task<List<AuthorDropdownViewModel>> GetAuthorsAsync();
+    Task<List<GenreDropdownViewModel>> GetGenresAsync();
+    Task<List<PublisherDropdownViewModel>> GetPublishersAsync();
 }

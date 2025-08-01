@@ -4,7 +4,7 @@ using BookManager.Services.Core.Contracts;
 using BookManager.ViewModels.Book;
 using BookManager.Web.Areas.Identity.Data;
 using Microsoft.EntityFrameworkCore;
-using BookManager.ViewModels.Book;
+
 
 
 namespace BookManager.Services.Core
@@ -140,36 +140,68 @@ namespace BookManager.Services.Core
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<AuthorDropdownViewModel>> GetAuthorsAsync()
+        public async Task<List<AuthorDropdownViewModel>> GetAuthorsAsync()
         {
             return await _context.Authors
                 .Select(a => new AuthorDropdownViewModel { Id = a.Id, Name = a.Name })
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<GenreDropdownViewModel>> GetGenresAsync()
+        public async Task<List<GenreDropdownViewModel>> GetGenresAsync()
         {
             return await _context.Genres
                 .Select(g => new GenreDropdownViewModel { Id = g.Id, Name = g.Name })
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<PublisherDropdownViewModel>> GetPublishersAsync()
+        public async Task<List<PublisherDropdownViewModel>> GetPublishersAsync()
         {
             return await _context.Publishers
-                .Select(p => new PublisherDropdownViewModel { Id = p.Id, Name = p.Name })
-                .ToListAsync();
+                .Select(p => new PublisherDropdownViewModel
+                {
+                    Id = p.Id,
+                    Name = p.Name
+                })
+                .ToListAsync(); 
         }
 
         public async Task CreateAsync(CreateBookViewModel model)
         {
+            Guid authorId = model.AuthorId ?? Guid.Empty;
+            Guid genreId = model.GenreId ?? Guid.Empty;
+            Guid publisherId = model.PublisherId ?? Guid.Empty;
+
+            if (!string.IsNullOrWhiteSpace(model.NewAuthorName))
+            {
+                var newAuthor = new Author { Name = model.NewAuthorName.Trim() };
+                _context.Authors.Add(newAuthor);
+                await _context.SaveChangesAsync();
+                authorId = newAuthor.Id;
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.NewGenreName))
+            {
+                var newGenre = new Genre { Name = model.NewGenreName.Trim() };
+                _context.Genres.Add(newGenre);
+                await _context.SaveChangesAsync();
+                genreId = newGenre.Id;
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.NewPublisherName))
+            {
+                var newPublisher = new Publisher { Name = model.NewPublisherName.Trim() };
+                _context.Publishers.Add(newPublisher);
+                await _context.SaveChangesAsync();
+                publisherId = newPublisher.Id;
+            }
+
             var book = new Book
             {
                 Title = model.Title,
                 Description = model.Description,
-                AuthorId = model.AuthorId,
-                GenreId = model.GenreId,
-                PublisherId = model.PublisherId,
+                AuthorId = authorId,
+                GenreId = genreId,
+                PublisherId = publisherId,
                 ImageUrl = model.ImageUrl
             };
 
