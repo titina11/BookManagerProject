@@ -28,7 +28,6 @@ else
 						<p class="card-text"><strong>Жанр:</strong> @book.Genre</p>
 						<p class="card-text"><strong>Издателство:</strong> @book.Publisher</p>
 						<p class="card-text">@book.Description?.Substring(0, Math.Min(book.Description.Length, 100))...</p>
-						<a asp-controller="Book" asp-action="Edit" asp-route-id="@book.Id" class="btn btn-outline-primary mt-2">Редактирай</a>
 					</div>
 				</div>
 			</div>

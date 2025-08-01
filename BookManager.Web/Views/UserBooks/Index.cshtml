@@ -1,0 +1,40 @@
+﻿@model IEnumerable<BookManager.ViewModels.UserBooks.UserBookListViewModel>
+
+@{
+	ViewData["Title"] = "Прочетени книги";
+}
+
+<h2>Моите прочетени книги</h2>
+
+<a asp-controller="ReadBooks" asp-action="Add" class="btn btn-success mb-3">Добави прочетена книга</a>
+
+@if (!Model.Any())
+{
+	<p>Все още нямаш добавени прочетени книги.</p>
+}
+else
+{
+	<table class="table table-striped">
+		<thead>
+		<tr>
+			<th>Заглавие</th>
+			<th>Начало</th>
+			<th>Край</th>
+			<th>Дни четене</th>
+			<th>Рейтинг</th>
+		</tr>
+		</thead>
+		<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>@item.Title</td>
+				<td>@item.StartDate.ToShortDateString()</td>
+				<td>@item.EndDate.ToShortDateString()</td>
+				<td>@item.DaysRead</td>
+				<td>@item.Rating / 10</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+}

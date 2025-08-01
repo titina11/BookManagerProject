@@ -29,6 +29,7 @@ else
 
 						<div class="d-flex justify-content-between mt-3">
 							<a asp-controller="Book" asp-action="Edit" asp-route-id="@book.Id" class="btn btn-outline-primary btn-sm">✏️ Редактирай</a>
+							<a asp-action="Details" asp-route-id="@book.Id" class="btn btn-outline-info mt-2">Детайли</a>
 							<a asp-controller="Book" asp-action="Delete" asp-route-id="@book.Id" class="btn btn-outline-danger btn-sm">🗑️ Изтрий</a>
 						</div>
 					</div>

@@ -209,6 +209,28 @@ namespace BookManager.Services.Core
             await _context.SaveChangesAsync();
         }
 
+        public async Task<BookViewModel?> GetDetailsByIdAsync(Guid id)
+        {
+            var book = await _context.Books
+                .Include(b => b.Author)
+                .Include(b => b.Genre)
+                .Include(b => b.Publisher)
+                .FirstOrDefaultAsync(b => b.Id == id);
+
+            if (book == null) return null;
+
+            return new BookViewModel
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Description = book.Description,
+                Author = book.Author.Name,
+                Genre = book.Genre.Name,
+                Publisher = book.Publisher.Name,
+                ImageUrl = book.ImageUrl
+            };
+        }
+
         public async Task DeleteAsync(Guid id)
         {
             var book = await _context.Books.FindAsync(id);

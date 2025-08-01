@@ -68,6 +68,18 @@ namespace BookManager.Web.Controllers
                 return RedirectToAction(nameof(All));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Details(Guid id)
+        {
+            var model = await _bookService.GetDetailsByIdAsync(id);
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            return View(model);
+        }
+
         public async Task<IActionResult> Delete(Guid id)
         {
             var book = await _bookService.GetByIdAsync(id);
