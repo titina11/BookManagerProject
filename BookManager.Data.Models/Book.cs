@@ -6,8 +6,11 @@ namespace BookManager.Data.Models
     {
         public Guid Id { get; set; }
 
+        [Required]
+        [StringLength(100)]
         public string Title { get; set; } = null!;
 
+        [StringLength(2000)]
         public string Description { get; set; } = null!;
 
         public Guid AuthorId { get; set; }
@@ -19,6 +22,7 @@ namespace BookManager.Data.Models
         public Guid GenreId { get; set; }
         public Genre Genre { get; set; } = null!;
 
+        [StringLength(500)]
         public string? ImageUrl { get; set; }
         public ICollection<UserBook> UserBooks { get; set; } = new HashSet<UserBook>();
 
