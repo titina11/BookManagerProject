@@ -23,5 +23,8 @@ namespace BookManager.Data.Models
         public ICollection<UserBook> UserBooks { get; set; } = new HashSet<UserBook>();
 
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
+
+        public string CreatedByUserId { get; set; } = null!;
+        public ApplicationUser CreatedByUser { get; set; } = null!;
     }
 }

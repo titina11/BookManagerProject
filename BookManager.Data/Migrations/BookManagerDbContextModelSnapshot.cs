@@ -85,6 +85,24 @@ namespace BookManager.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "12345678-abcd-1234-abcd-1234567890ab",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "94950648-b2ed-4705-9f53-9215993a1d23",
+                            Email = "seeduser@example.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "SEEDUSER@EXAMPLE.COM",
+                            NormalizedUserName = "SEEDUSER@EXAMPLE.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFpUyPwhlTG4HOSov1cF6OWg4+jE7ZuOw2TCTmUyU/OSGfPoTOE48qMJ/VoSxSPmbw==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "a638f80f-c0d2-43e1-9ff7-aeca5aca92da",
+                            TwoFactorEnabled = false,
+                            UserName = "seeduser@example.com"
+                        });
                 });
 
             modelBuilder.Entity("BookManager.Data.Models.Author", b =>
@@ -129,6 +147,10 @@ namespace BookManager.Data.Migrations
                     b.Property<Guid>("AuthorId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(2000)
@@ -153,6 +175,8 @@ namespace BookManager.Data.Migrations
 
                     b.HasIndex("AuthorId");
 
+                    b.HasIndex("CreatedByUserId");
+
                     b.HasIndex("GenreId");
 
                     b.HasIndex("PublisherId");
@@ -164,6 +188,7 @@ namespace BookManager.Data.Migrations
                         {
                             Id = new Guid("7a1a29d6-70c4-4c02-9469-3b92d3d9b7ee"),
                             AuthorId = new Guid("9e340fd5-7f9e-43dc-96f0-07a3b9a1b12a"),
+                            CreatedByUserId = "12345678-abcd-1234-abcd-1234567890ab",
                             Description = "…",
                             GenreId = new Guid("e6a6a80b-9eb6-4ce3-92b5-00b5cf9a53db"),
                             ImageUrl = "https://knigoman.bg/books/2303525764_1552613569786.png",
@@ -174,6 +199,7 @@ namespace BookManager.Data.Migrations
                         {
                             Id = new Guid("89c68c41-e015-4bc2-8c03-4fbd7a0f2678"),
                             AuthorId = new Guid("264a2a30-ec23-4aef-b1cb-8c7a4c9f7fa4"),
+                            CreatedByUserId = "12345678-abcd-1234-abcd-1234567890ab",
                             Description = "…",
                             GenreId = new Guid("e6a6a80b-9eb6-4ce3-92b5-00b5cf9a53db"),
                             ImageUrl = "https://cdn.ozone.bg/media/catalog/product/s/t/stakleniyat_tron_…",
@@ -452,6 +478,12 @@ namespace BookManager.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("BookManager.Data.Models.ApplicationUser", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("BookManager.Data.Models.Genre", "Genre")
                         .WithMany("Books")
                         .HasForeignKey("GenreId")
@@ -465,6 +497,8 @@ namespace BookManager.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Author");
+
+                    b.Navigation("CreatedByUser");
 
                     b.Navigation("Genre");
 

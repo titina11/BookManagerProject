@@ -1,5 +1,6 @@
 using BookManager.Data;
 using BookManager.Data.Models;
+using BookManager.Data.Configuration;
 using BookManager.Services.Core;
 using BookManager.Web.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
@@ -14,11 +15,10 @@ builder.Services.AddDbContext<BookManagerDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
-    {
-        options.SignIn.RequireConfirmedAccount = false;
-    })
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>() 
     .AddEntityFrameworkStores<BookManagerDbContext>();
+
 builder.Services.AddControllersWithViews()
     .AddDataAnnotationsLocalization();
 
@@ -29,6 +29,13 @@ builder.Services.AddScoped<IAuthorBookService, AuthorBookService>();
 
 
 var app = builder.Build();
+
+// Seed roles and admin user
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await IdentitySeeder.SeedRolesAndAdminAsync(services);
+}
 
 
 // Configure the HTTP request pipeline.
@@ -48,6 +55,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
@@ -56,3 +64,5 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
+
+

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BookManager.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -205,11 +205,18 @@ namespace BookManager.Data.Migrations
                     AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PublisherId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     GenreId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
+                    ImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    CreatedByUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Books", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Books_AspNetUsers_CreatedByUserId",
+                        column: x => x.CreatedByUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Books_Authors_AuthorId",
                         column: x => x.AuthorId,
@@ -262,7 +269,11 @@ namespace BookManager.Data.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    BookId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    BookId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Rating = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -280,6 +291,11 @@ namespace BookManager.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "12345678-abcd-1234-abcd-1234567890ab", 0, "94950648-b2ed-4705-9f53-9215993a1d23", "seeduser@example.com", true, false, null, "SEEDUSER@EXAMPLE.COM", "SEEDUSER@EXAMPLE.COM", "AQAAAAIAAYagAAAAEFpUyPwhlTG4HOSov1cF6OWg4+jE7ZuOw2TCTmUyU/OSGfPoTOE48qMJ/VoSxSPmbw==", null, false, "a638f80f-c0d2-43e1-9ff7-aeca5aca92da", false, "seeduser@example.com" });
 
             migrationBuilder.InsertData(
                 table: "Authors",
@@ -313,11 +329,11 @@ namespace BookManager.Data.Migrations
 
             migrationBuilder.InsertData(
                 table: "Books",
-                columns: new[] { "Id", "AuthorId", "Description", "GenreId", "ImageUrl", "PublisherId", "Title" },
+                columns: new[] { "Id", "AuthorId", "CreatedByUserId", "Description", "GenreId", "ImageUrl", "PublisherId", "Title" },
                 values: new object[,]
                 {
-                    { new Guid("7a1a29d6-70c4-4c02-9469-3b92d3d9b7ee"), new Guid("9e340fd5-7f9e-43dc-96f0-07a3b9a1b12a"), "…", new Guid("e6a6a80b-9eb6-4ce3-92b5-00b5cf9a53db"), "https://knigoman.bg/books/2303525764_1552613569786.png", new Guid("1f76d1f6-5c97-42b1-a5c7-e685b1541c1b"), "Змията и крилете на нощта" },
-                    { new Guid("89c68c41-e015-4bc2-8c03-4fbd7a0f2678"), new Guid("264a2a30-ec23-4aef-b1cb-8c7a4c9f7fa4"), "…", new Guid("e6a6a80b-9eb6-4ce3-92b5-00b5cf9a53db"), "https://cdn.ozone.bg/media/catalog/product/s/t/stakleniyat_tron_…", new Guid("2a9cd570-96b6-4f52-b56d-137e2c5d5eaf"), "Стъкленият трон" }
+                    { new Guid("7a1a29d6-70c4-4c02-9469-3b92d3d9b7ee"), new Guid("9e340fd5-7f9e-43dc-96f0-07a3b9a1b12a"), "12345678-abcd-1234-abcd-1234567890ab", "…", new Guid("e6a6a80b-9eb6-4ce3-92b5-00b5cf9a53db"), "https://knigoman.bg/books/2303525764_1552613569786.png", new Guid("1f76d1f6-5c97-42b1-a5c7-e685b1541c1b"), "Змията и крилете на нощта" },
+                    { new Guid("89c68c41-e015-4bc2-8c03-4fbd7a0f2678"), new Guid("264a2a30-ec23-4aef-b1cb-8c7a4c9f7fa4"), "12345678-abcd-1234-abcd-1234567890ab", "…", new Guid("e6a6a80b-9eb6-4ce3-92b5-00b5cf9a53db"), "https://cdn.ozone.bg/media/catalog/product/s/t/stakleniyat_tron_…", new Guid("2a9cd570-96b6-4f52-b56d-137e2c5d5eaf"), "Стъкленият трон" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -363,6 +379,11 @@ namespace BookManager.Data.Migrations
                 name: "IX_Books_AuthorId",
                 table: "Books",
                 column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Books_CreatedByUserId",
+                table: "Books",
+                column: "CreatedByUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Books_GenreId",
@@ -418,10 +439,10 @@ namespace BookManager.Data.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Books");
 
             migrationBuilder.DropTable(
-                name: "Books");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Authors");

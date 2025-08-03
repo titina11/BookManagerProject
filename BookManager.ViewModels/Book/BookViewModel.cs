@@ -16,5 +16,6 @@
 
         public string? ImageUrl { get; set; }
 
+        public string CreatedByUserId { get; set; } = null!; 
     }
 }

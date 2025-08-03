@@ -29,6 +29,8 @@ namespace BookManager.ViewModels.Book
         [Display(Name = "Издателство")]
         public Guid PublisherId { get; set; }
 
+        public string CreatedByUserId { get; set; } = null!;
+
         public IEnumerable<AuthorDropdownViewModel> Authors { get; set; } = new List<AuthorDropdownViewModel>();
         public IEnumerable<GenreDropdownViewModel> Genres { get; set; } = new List<GenreDropdownViewModel>();
         public IEnumerable<PublisherDropdownViewModel> Publishers { get; set; } = new List<PublisherDropdownViewModel>();

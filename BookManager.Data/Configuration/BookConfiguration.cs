@@ -31,6 +31,13 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
         builder.Property(b => b.ImageUrl)
             .HasMaxLength(500);
 
+        builder.HasOne(b => b.CreatedByUser)
+            .WithMany()
+            .HasForeignKey(b => b.CreatedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        const string defaultUserId = "12345678-abcd-1234-abcd-1234567890ab";
+
         builder.HasData(
             new Book
             {
@@ -40,7 +47,8 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
                 GenreId = Guid.Parse("e6a6a80b-9eb6-4ce3-92b5-00b5cf9a53db"),
                 PublisherId = Guid.Parse("1f76d1f6-5c97-42b1-a5c7-e685b1541c1b"),
                 Description = "…",
-                ImageUrl = "https://knigoman.bg/books/2303525764_1552613569786.png"
+                ImageUrl = "https://knigoman.bg/books/2303525764_1552613569786.png",
+                CreatedByUserId = defaultUserId
             },
             new Book
             {
@@ -50,7 +58,8 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
                 GenreId = Guid.Parse("e6a6a80b-9eb6-4ce3-92b5-00b5cf9a53db"),
                 PublisherId = Guid.Parse("2a9cd570-96b6-4f52-b56d-137e2c5d5eaf"),
                 Description = "…",
-                ImageUrl = "https://cdn.ozone.bg/media/catalog/product/s/t/stakleniyat_tron_…"
+                ImageUrl = "https://cdn.ozone.bg/media/catalog/product/s/t/stakleniyat_tron_…",
+                CreatedByUserId = defaultUserId
             }
         );
     }

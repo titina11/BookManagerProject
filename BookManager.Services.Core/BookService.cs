@@ -33,7 +33,8 @@ namespace BookManager.Services.Core
                     Author = b.Author.Name,
                     Genre = b.Genre.Name,
                     Publisher = b.Publisher.Name,
-                    ImageUrl = b.ImageUrl
+                    ImageUrl = b.ImageUrl,
+                    CreatedByUserId = b.CreatedByUserId,
                 })
                 .ToListAsync();
         }
@@ -56,7 +57,8 @@ namespace BookManager.Services.Core
                 Author = book.Author.Name,
                 Genre = book.Genre.Name,
                 Publisher = book.Publisher.Name,
-                ImageUrl = book.ImageUrl
+                ImageUrl = book.ImageUrl,
+                CreatedByUserId = book.CreatedByUserId
             };
         }
 
@@ -122,7 +124,8 @@ namespace BookManager.Services.Core
                 PublisherId = book.PublisherId,
                 Authors = await GetAuthorsAsync(),
                 Genres = await GetGenresAsync(),
-                Publishers = await GetPublishersAsync()
+                Publishers = await GetPublishersAsync(),
+                CreatedByUserId = book.CreatedByUserId,
             };
         }
 
@@ -137,6 +140,7 @@ namespace BookManager.Services.Core
             book.AuthorId = model.AuthorId;
             book.GenreId = model.GenreId;
             book.PublisherId = model.PublisherId;
+            book.CreatedByUserId = model.CreatedByUserId;
 
             await _context.SaveChangesAsync();
         }
@@ -203,7 +207,8 @@ namespace BookManager.Services.Core
                 AuthorId = authorId,
                 GenreId = genreId,
                 PublisherId = publisherId,
-                ImageUrl = model.ImageUrl
+                ImageUrl = model.ImageUrl,
+                CreatedByUserId = model.CreatedByUserId
             };
 
             _context.Books.Add(book);
@@ -228,7 +233,8 @@ namespace BookManager.Services.Core
                 Author = book.Author.Name,
                 Genre = book.Genre.Name,
                 Publisher = book.Publisher.Name,
-                ImageUrl = book.ImageUrl
+                ImageUrl = book.ImageUrl,
+                CreatedByUserId = book.CreatedByUserId
             };
         }
 
@@ -270,7 +276,8 @@ namespace BookManager.Services.Core
                     Author = b.Author.Name,
                     Genre = b.Genre.Name,
                     Publisher = b.Publisher.Name,
-                    ImageUrl = b.ImageUrl
+                    ImageUrl = b.ImageUrl,
+                    CreatedByUserId = b.CreatedByUserId
                 })
                 .ToListAsync();
 

@@ -4,6 +4,7 @@ using BookManager.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using BookManager.Web.Areas.Identity.Data;
 
 namespace BookManager.Web.Areas.Identity.Data;
 
@@ -21,6 +22,7 @@ public class BookManagerDbContext : IdentityDbContext<ApplicationUser>
     public virtual DbSet<Review> Reviews => Set<Review>();
 
     public virtual DbSet<UserBook> UserBooks { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
 
@@ -30,7 +32,8 @@ public class BookManagerDbContext : IdentityDbContext<ApplicationUser>
         builder.ApplyConfiguration(new GenreConfiguration());
         builder.ApplyConfiguration(new PublisherConfiguration());
         builder.ApplyConfiguration(new UserBookConfiguration());
-
+        builder.ApplyConfiguration(new ApplicationUserConfiguration());
     }
-
 }
+
+
