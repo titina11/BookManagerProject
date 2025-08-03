@@ -124,15 +124,19 @@ namespace BookManager.Services.Core
                 PublisherId = book.PublisherId,
                 Authors = await GetAuthorsAsync(),
                 Genres = await GetGenresAsync(),
-                Publishers = await GetPublishersAsync(),
-                CreatedByUserId = book.CreatedByUserId,
+                Publishers = await GetPublishersAsync()
             };
         }
 
-        public async Task EditAsync(Guid id, EditBookViewModel model)
+        public async Task EditAsync(Guid id, EditBookViewModel model, string currentUserId, bool isAdmin)
         {
             var book = await _context.Books.FindAsync(id);
             if (book == null) return;
+
+            if (book.CreatedByUserId != currentUserId && !isAdmin)
+            {
+                return;
+            }
 
             book.Title = model.Title;
             book.Description = model.Description;
@@ -140,7 +144,6 @@ namespace BookManager.Services.Core
             book.AuthorId = model.AuthorId;
             book.GenreId = model.GenreId;
             book.PublisherId = model.PublisherId;
-            book.CreatedByUserId = model.CreatedByUserId;
 
             await _context.SaveChangesAsync();
         }
@@ -170,7 +173,7 @@ namespace BookManager.Services.Core
                 .ToListAsync(); 
         }
 
-        public async Task CreateAsync(CreateBookViewModel model)
+        public async Task CreateAsync(CreateBookViewModel model, string createdByUserId)
         {
             Guid authorId = model.AuthorId ?? Guid.Empty;
             Guid genreId = model.GenreId ?? Guid.Empty;
@@ -208,7 +211,7 @@ namespace BookManager.Services.Core
                 GenreId = genreId,
                 PublisherId = publisherId,
                 ImageUrl = model.ImageUrl,
-                CreatedByUserId = model.CreatedByUserId
+                CreatedByUserId = createdByUserId 
             };
 
             _context.Books.Add(book);

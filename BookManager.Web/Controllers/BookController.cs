@@ -33,6 +33,7 @@ namespace BookManager.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateBookViewModel model)
         {
             if (!ModelState.IsValid)
@@ -40,14 +41,13 @@ namespace BookManager.Web.Controllers
                 model.Authors = await _bookService.GetAuthorsAsync();
                 model.Genres = await _bookService.GetGenresAsync();
                 model.Publishers = await _bookService.GetPublishersAsync();
-                return View(model);
+                return View(model); 
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            model.CreatedByUserId = userId;
+            await _bookService.CreateAsync(model, userId); 
 
-            await _bookService.CreateAsync(model);
-            return RedirectToAction(nameof(All));
+            return RedirectToAction(nameof(All)); 
         }
 
 
@@ -69,10 +69,12 @@ namespace BookManager.Web.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, EditBookViewModel model)
         {
             var book = await _bookService.GetByIdAsync(id);
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             if (book == null || (book.CreatedByUserId != userId && !User.IsInRole("Admin")))
             {
                 return Forbid();
@@ -86,7 +88,9 @@ namespace BookManager.Web.Controllers
                 return View(model);
             }
 
-            await _bookService.EditAsync(id, model);
+            var isAdmin = User.IsInRole("Admin");
+            await _bookService.EditAsync(id, model, userId, isAdmin); 
+
             return RedirectToAction(nameof(All));
         }
 
@@ -94,7 +98,7 @@ namespace BookManager.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(Guid id, string? returnUrl)
         {
-            ViewBag.ReturnUrl = returnUrl ?? "Books";
+            ViewBag.ReturnUrl = returnUrl ?? Url.Action(nameof(All));
 
             var model = await _bookService.GetDetailsByIdAsync(id);
             if (model == null)
@@ -119,6 +123,7 @@ namespace BookManager.Web.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmDelete(Guid id)
         {
             var book = await _bookService.GetByIdAsync(id);

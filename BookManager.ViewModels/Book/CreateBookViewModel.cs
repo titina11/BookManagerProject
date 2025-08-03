@@ -30,8 +30,6 @@ public class CreateBookViewModel
 
     public string? ImageUrl { get; set; }
 
-    public string CreatedByUserId { get; set; } = null!;
-
     public List<AuthorDropdownViewModel> Authors { get; set; } = new();
     public List<GenreDropdownViewModel> Genres { get; set; } = new();
     public List<PublisherDropdownViewModel> Publishers { get; set; } = new();

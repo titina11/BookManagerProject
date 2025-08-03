@@ -15,7 +15,7 @@ public class ApplicationUserConfiguration : IEntityTypeConfiguration<Application
                 Email = "seeduser@example.com",
                 NormalizedEmail = "SEEDUSER@EXAMPLE.COM",
                 EmailConfirmed = true,
-                PasswordHash = "AQAAAAIAAYagAAAAEFpUyPwhlTG4HOSov1cF6OWg4+jE7ZuOw2TCTmUyU/OSGfPoTOE48qMJ/VoSxSPmbw==", 
+                PasswordHash = "AQAAAAIAAYagAAAAEG3fsRf5GXhdPIBCvggI4+9nD0u41qgonyEWk6/efTN14w0wR4iRD2ESwZyfk3dRrA==", 
                 SecurityStamp = "a638f80f-c0d2-43e1-9ff7-aeca5aca92da",
                 ConcurrencyStamp = "94950648-b2ed-4705-9f53-9215993a1d23"
             }
