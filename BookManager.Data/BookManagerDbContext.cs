@@ -1,5 +1,6 @@
 ﻿
 using System.Reflection;
+using BookManager.Data.Configuration;
 using BookManager.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -33,6 +34,7 @@ public class BookManagerDbContext : IdentityDbContext<ApplicationUser>
         builder.ApplyConfiguration(new PublisherConfiguration());
         builder.ApplyConfiguration(new UserBookConfiguration());
         builder.ApplyConfiguration(new ApplicationUserConfiguration());
+        builder.ApplyConfiguration(new ReviewConfiguration());
     }
 }
 

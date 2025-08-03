@@ -5,6 +5,7 @@
 	var returnUrl = ViewBag.ReturnUrl as string ?? Url.Action("All", "Book");
 }
 
+
 <h2>@Model.Title</h2>
 
 <div class="row">
@@ -17,7 +18,34 @@
 		<p><strong>Издателство:</strong> @Model.Publisher</p>
 		<p><strong>Описание:</strong></p>
 		<p>@Model.Description</p>
-
+		
+		@if (User.Identity.IsAuthenticated)
+		{
+			<a asp-controller="Review" asp-action="Create" asp-route-bookId="@Model.Id" class="btn btn-success">Добави рецензия</a>
+		}
 		<a href="@returnUrl" class="btn btn-secondary">⬅ Назад</a>
 	</div>
 </div>
+
+@inject IReviewService ReviewService
+@{
+	var reviews = await ReviewService.GetReviewsForBookAsync(Model.Id);
+}
+
+<h3>Рецензии</h3>
+
+@if (reviews.Any())
+{
+	foreach (var review in reviews)
+	{
+		<div class="border p-2 mb-2">
+			<strong>@review.UserEmail</strong>:
+			<div>Оценка: @review.Rating / 5</div>
+			<p>@review.Content</p>
+		</div>
+	}
+}
+else
+{
+	<p>Все още няма рецензии за тази книга.</p>
+}
