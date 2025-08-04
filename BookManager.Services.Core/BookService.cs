@@ -93,7 +93,8 @@ namespace BookManager.Services.Core
                     ImageUrl = b.ImageUrl,
                     Author = b.Author.Name,
                     Genre = b.Genre.Name,
-                    Publisher = b.Publisher.Name
+                    Publisher = b.Publisher.Name,
+                    CreatedByUserId = b.CreatedByUserId
                 })
                 .ToListAsync();
         }

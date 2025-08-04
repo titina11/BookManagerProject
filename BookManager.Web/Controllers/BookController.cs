@@ -22,6 +22,13 @@ namespace BookManager.Web.Controllers
         public async Task<IActionResult> All(string? title, Guid? authorId, Guid? genreId, Guid? publisherId)
         {
             var model = await _bookService.GetFilteredAsync(title, authorId, genreId, publisherId);
+
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole("Admin");
+
+            ViewBag.CurrentUserId = currentUserId;
+            ViewBag.IsAdmin = isAdmin;
+
             return View(model);
         }
 
