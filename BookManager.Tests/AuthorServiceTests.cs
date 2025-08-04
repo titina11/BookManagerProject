@@ -1,15 +1,8 @@
-﻿using BookManager.Data;
-using BookManager.Data.Models;
-using BookManager.Services.Core;
+﻿using BookManager.Data.Models;
 using BookManager.ViewModels.Author;
 using BookManager.ViewModels.Authors;
 using BookManager.Web.Areas.Identity.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Xunit;
 
 public class AuthorServiceTests
 {
