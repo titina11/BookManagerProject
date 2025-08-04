@@ -1,9 +1,11 @@
-﻿using BookManager.Data;
+﻿using System.Security.Claims;
+using BookManager.Data;
 using BookManager.Data.Models;
 using BookManager.Services.Core;
 using BookManager.ViewModels.Book;
 using BookManager.ViewModels.Books;
 using BookManager.Web.Areas.Identity.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -176,43 +178,80 @@ namespace BookManager.Services.Core
 
         public async Task CreateAsync(CreateBookViewModel model, string createdByUserId)
         {
-            Guid authorId = model.AuthorId ?? Guid.Empty;
-            Guid genreId = model.GenreId ?? Guid.Empty;
-            Guid publisherId = model.PublisherId ?? Guid.Empty;
-
+            Guid authorId;
             if (!string.IsNullOrWhiteSpace(model.NewAuthorName))
             {
-                var newAuthor = new Author { Name = model.NewAuthorName.Trim() };
+                var newAuthor = new Author
+                {
+                    Id = Guid.NewGuid(),
+                    Name = model.NewAuthorName.Trim(),
+                    CreatedByUserId = createdByUserId
+                };
                 _context.Authors.Add(newAuthor);
                 await _context.SaveChangesAsync();
                 authorId = newAuthor.Id;
             }
+            else if (model.AuthorId.HasValue)
+            {
+                authorId = model.AuthorId.Value;
+            }
+            else
+            {
+                throw new ArgumentException("Author is required.");
+            }
 
+            Guid genreId;
             if (!string.IsNullOrWhiteSpace(model.NewGenreName))
             {
-                var newGenre = new Genre { Name = model.NewGenreName.Trim() };
+                var newGenre = new Genre
+                {
+                    Id = Guid.NewGuid(),
+                    Name = model.NewGenreName.Trim()
+                };
                 _context.Genres.Add(newGenre);
                 await _context.SaveChangesAsync();
                 genreId = newGenre.Id;
             }
+            else if (model.GenreId.HasValue)
+            {
+                genreId = model.GenreId.Value;
+            }
+            else
+            {
+                throw new ArgumentException("Genre is required.");
+            }
 
+            Guid publisherId;
             if (!string.IsNullOrWhiteSpace(model.NewPublisherName))
             {
-                var newPublisher = new Publisher { Name = model.NewPublisherName.Trim() };
+                var newPublisher = new Publisher
+                {
+                    Id = Guid.NewGuid(),
+                    Name = model.NewPublisherName.Trim()
+                };
                 _context.Publishers.Add(newPublisher);
                 await _context.SaveChangesAsync();
                 publisherId = newPublisher.Id;
             }
+            else if (model.PublisherId.HasValue)
+            {
+                publisherId = model.PublisherId.Value;
+            }
+            else
+            {
+                throw new ArgumentException("Publisher is required.");
+            }
 
             var book = new Book
             {
-                Title = model.Title,
-                Description = model.Description,
+                Id = Guid.NewGuid(),
+                Title = model.Title.Trim(),
+                Description = model.Description.Trim(),
                 AuthorId = authorId,
                 GenreId = genreId,
                 PublisherId = publisherId,
                 ImageUrl = model.ImageUrl,
-                CreatedByUserId = createdByUserId 
+                CreatedByUserId = createdByUserId
             };
 
             _context.Books.Add(book);

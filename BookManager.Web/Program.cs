@@ -1,6 +1,7 @@
 using BookManager.Data;
 using BookManager.Data.Models;
 using BookManager.Data.Configuration;
+using BookManager.Services;
 using BookManager.Services.Core;
 using BookManager.Services.Core.Contracts;
 using BookManager.Web.Areas.Identity.Data;
@@ -12,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
 builder.Services.AddDbContext<BookManagerDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -25,8 +27,8 @@ builder.Services.AddControllersWithViews()
 
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
-builder.Services.AddScoped<IAuthorBookService, AuthorBookService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IGenreService, GenreService>();
 
 
 

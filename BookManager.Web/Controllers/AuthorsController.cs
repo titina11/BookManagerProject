@@ -3,7 +3,6 @@ using BookManager.ViewModels.Author;
 using BookManager.ViewModels.Authors;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace BookManager.Controllers
@@ -11,12 +10,10 @@ namespace BookManager.Controllers
     public class AuthorsController : Controller
     {
         private readonly IAuthorService _authorService;
-        private readonly IAuthorBookService _authorBookService;
 
-        public AuthorsController(IAuthorService authorService, IAuthorBookService authorBookService)
+        public AuthorsController(IAuthorService authorService)
         {
             _authorService = authorService;
-            _authorBookService = authorBookService;
         }
 
         public IActionResult Index()
@@ -33,10 +30,11 @@ namespace BookManager.Controllers
 
             return View(authors);
         }
+
         [HttpGet]
         public async Task<IActionResult> AddBook(Guid authorId)
         {
-            var model = await _authorBookService.GetAddBookModelAsync(authorId);
+            var model = await _authorService.GetAddBookModelAsync(authorId);
             return View(model);
         }
 
@@ -45,11 +43,11 @@ namespace BookManager.Controllers
         {
             if (!ModelState.IsValid)
             {
-                model.Books = (await _authorBookService.GetAddBookModelAsync(model.AuthorId)).Books;
+                model.Books = (await _authorService.GetAddBookModelAsync(model.AuthorId)).Books;
                 return View(model);
             }
 
-            await _authorBookService.AddBookToAuthorAsync(model);
+            await _authorService.AddBookToAuthorAsync(model);
             return RedirectToAction("All");
         }
 
@@ -65,7 +63,9 @@ namespace BookManager.Controllers
             if (!ModelState.IsValid) return View(model);
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            await _authorService.CreateAsync(model, userId);
+            if (userId == null) return Unauthorized(); 
+
+            await _authorService.CreateAsync(model, userId); 
             return RedirectToAction(nameof(All));
         }
 

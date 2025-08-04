@@ -154,7 +154,7 @@ public class AuthorServiceTests
 
         using (var dbContext = new BookManagerDbContext(options))
         {
-            var service = new AuthorBookService(dbContext);
+            var service = new AuthorService(dbContext);
 
             var model = new AddBookToAuthorViewModel
             {

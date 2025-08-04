@@ -57,7 +57,8 @@ namespace BookManager.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    CreatedByUserId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -222,7 +223,7 @@ namespace BookManager.Data.Migrations
                         column: x => x.AuthorId,
                         principalTable: "Authors",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Books_Genres_GenreId",
                         column: x => x.GenreId,
@@ -242,7 +243,7 @@ namespace BookManager.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
                     Rating = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     BookId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
@@ -295,16 +296,16 @@ namespace BookManager.Data.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "12345678-abcd-1234-abcd-1234567890ab", 0, "94950648-b2ed-4705-9f53-9215993a1d23", "seeduser@example.com", true, false, null, "SEEDUSER@EXAMPLE.COM", "SEEDUSER@EXAMPLE.COM", "AQAAAAIAAYagAAAAEFpUyPwhlTG4HOSov1cF6OWg4+jE7ZuOw2TCTmUyU/OSGfPoTOE48qMJ/VoSxSPmbw==", null, false, "a638f80f-c0d2-43e1-9ff7-aeca5aca92da", false, "seeduser@example.com" });
+                values: new object[] { "12345678-abcd-1234-abcd-1234567890ab", 0, "94950648-b2ed-4705-9f53-9215993a1d23", "seeduser@example.com", true, false, null, "SEEDUSER@EXAMPLE.COM", "SEEDUSER@EXAMPLE.COM", "AQAAAAIAAYagAAAAEG3fsRf5GXhdPIBCvggI4+9nD0u41qgonyEWk6/efTN14w0wR4iRD2ESwZyfk3dRrA==", null, false, "a638f80f-c0d2-43e1-9ff7-aeca5aca92da", false, "seeduser@example.com" });
 
             migrationBuilder.InsertData(
                 table: "Authors",
-                columns: new[] { "Id", "Name" },
+                columns: new[] { "Id", "CreatedByUserId", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("264a2a30-ec23-4aef-b1cb-8c7a4c9f7fa4"), "Сара Дж. Маас" },
-                    { new Guid("9e340fd5-7f9e-43dc-96f0-07a3b9a1b12a"), "Кариса Броудбент" },
-                    { new Guid("fdddc2cb-718a-4cf3-9a8c-490c61cd31ae"), "Джордж Р.Р.Мартин" }
+                    { new Guid("264a2a30-ec23-4aef-b1cb-8c7a4c9f7fa4"), "12345678-abcd-1234-abcd-1234567890ab", "Сара Дж. Маас" },
+                    { new Guid("9e340fd5-7f9e-43dc-96f0-07a3b9a1b12a"), "12345678-abcd-1234-abcd-1234567890ab", "Кариса Броудбент" },
+                    { new Guid("fdddc2cb-718a-4cf3-9a8c-490c61cd31ae"), "12345678-abcd-1234-abcd-1234567890ab", "Джордж Р.Р.Мартин" }
                 });
 
             migrationBuilder.InsertData(

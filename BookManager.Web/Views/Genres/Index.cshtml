@@ -1,0 +1,32 @@
+﻿@model IEnumerable<BookManager.ViewModels.Genre.GenreViewModel>
+
+@{
+	ViewData["Title"] = "Всички жанрове";
+}
+
+<h2>Всички жанрове</h2>
+
+<p>
+	<a class="btn btn-primary" asp-action="Create">➕ Добави нов жанр</a>
+</p>
+
+<table class="table table-striped">
+	<thead>
+	<tr>
+		<th>Жанр</th>
+		<th>Действия</th>
+	</tr>
+	</thead>
+	<tbody>
+	@foreach (var genre in Model)
+	{
+		<tr>
+			<td>@genre.Name</td>
+			<td>
+				<a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@genre.Id">Редактирай</a>
+				<a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@genre.Id">Изтрий</a>
+			</td>
+		</tr>
+	}
+	</tbody>
+</table>

@@ -1,0 +1,23 @@
+﻿@model BookManager.ViewModels.Genre.GenreViewModel
+
+@{
+	ViewData["Title"] = "Създай жанр";
+}
+
+<h2>Създай нов жанр</h2>
+
+<form asp-action="Create" method="post">
+	<div class="form-group">
+		<label asp-for="Name"></label>
+		<input asp-for="Name" class="form-control" />
+		<span asp-validation-for="Name" class="text-danger"></span>
+	</div>
+
+	<br />
+	<button type="submit" class="btn btn-success">Запази</button>
+	<a asp-action="Index" class="btn btn-secondary">Отказ</a>
+</form>
+
+@section Scripts {
+	@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

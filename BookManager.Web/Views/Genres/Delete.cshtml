@@ -1,0 +1,15 @@
+﻿@model BookManager.ViewModels.Genre.GenreViewModel
+
+@{
+	ViewData["Title"] = "Изтриване на жанр";
+}
+
+<h2>Сигурни ли сте, че искате да изтриете жанра?</h2>
+
+<h3>@Model.Name</h3>
+
+<form asp-action="Delete" method="post">
+	<input type="hidden" asp-for="Id" />
+	<button type="submit" class="btn btn-danger">Изтрий</button>
+	<a asp-action="Index" class="btn btn-secondary">Отказ</a>
+</form>

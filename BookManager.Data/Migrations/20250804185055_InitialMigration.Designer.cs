@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookManager.Data.Migrations
 {
     [DbContext(typeof(BookManagerDbContext))]
-    [Migration("20250802222958_FixBookCreatedByUserIdNotNull")]
-    partial class FixBookCreatedByUserIdNotNull
+    [Migration("20250804185055_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -100,7 +100,7 @@ namespace BookManager.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SEEDUSER@EXAMPLE.COM",
                             NormalizedUserName = "SEEDUSER@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFpUyPwhlTG4HOSov1cF6OWg4+jE7ZuOw2TCTmUyU/OSGfPoTOE48qMJ/VoSxSPmbw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEG3fsRf5GXhdPIBCvggI4+9nD0u41qgonyEWk6/efTN14w0wR4iRD2ESwZyfk3dRrA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "a638f80f-c0d2-43e1-9ff7-aeca5aca92da",
                             TwoFactorEnabled = false,
@@ -113,6 +113,10 @@ namespace BookManager.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -127,16 +131,19 @@ namespace BookManager.Data.Migrations
                         new
                         {
                             Id = new Guid("9e340fd5-7f9e-43dc-96f0-07a3b9a1b12a"),
+                            CreatedByUserId = "12345678-abcd-1234-abcd-1234567890ab",
                             Name = "Кариса Броудбент"
                         },
                         new
                         {
                             Id = new Guid("264a2a30-ec23-4aef-b1cb-8c7a4c9f7fa4"),
+                            CreatedByUserId = "12345678-abcd-1234-abcd-1234567890ab",
                             Name = "Сара Дж. Маас"
                         },
                         new
                         {
                             Id = new Guid("fdddc2cb-718a-4cf3-9a8c-490c61cd31ae"),
+                            CreatedByUserId = "12345678-abcd-1234-abcd-1234567890ab",
                             Name = "Джордж Р.Р.Мартин"
                         });
                 });
@@ -295,7 +302,8 @@ namespace BookManager.Data.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<int>("Rating")
                         .HasColumnType("int");
@@ -478,7 +486,7 @@ namespace BookManager.Data.Migrations
                     b.HasOne("BookManager.Data.Models.Author", "Author")
                         .WithMany("Books")
                         .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BookManager.Data.Models.ApplicationUser", "CreatedByUser")

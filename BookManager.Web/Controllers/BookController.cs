@@ -1,9 +1,10 @@
-﻿using BookManager.Services.Core;
+﻿using BookManager.Data.Models;
+using BookManager.Services.Core;
 using BookManager.ViewModels.Book;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using BookManager.Data.Models;
 
 namespace BookManager.Web.Controllers
 {
@@ -43,18 +44,28 @@ namespace BookManager.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateBookViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || model.AuthorId == null || model.GenreId == null || model.PublisherId == null)
             {
+                if (model.AuthorId == null)
+                    ModelState.AddModelError(nameof(model.AuthorId), "Моля, изберете автор или добавете нов.");
+                if (model.GenreId == null)
+                    ModelState.AddModelError(nameof(model.GenreId), "Моля, изберете жанр или добавете нов.");
+                if (model.PublisherId == null)
+                    ModelState.AddModelError(nameof(model.PublisherId), "Моля, изберете издателство или добавете нов.");
+
                 model.Authors = await _bookService.GetAuthorsAsync();
                 model.Genres = await _bookService.GetGenresAsync();
                 model.Publishers = await _bookService.GetPublishersAsync();
-                return View(model); 
+
+                return View(model);
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            await _bookService.CreateAsync(model, userId); 
+            if (userId == null) return Unauthorized();
 
-            return RedirectToAction(nameof(All)); 
+            await _bookService.CreateAsync(model, userId);
+
+            return RedirectToAction(nameof(All));
         }
 
 

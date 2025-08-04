@@ -1,0 +1,21 @@
+﻿@{
+	ViewData["Title"] = "Администраторски панел";
+}
+
+<h2 class="mt-4">Администраторски панел</h2>
+<p>Избери какво искаш да управляваш:</p>
+
+<ul class="list-group mt-3">
+	<li class="list-group-item">
+		<a asp-controller="Authors" asp-action="All">Управление на автори</a>
+	</li>
+	<li class="list-group-item">
+		<a asp-controller="Genres" asp-action="Index">Управление на жанрове</a>
+	</li>
+	<li class="list-group-item">
+		<a asp-controller="Book" asp-action="All">Управление на книги</a>
+	</li>
+	<li class="list-group-item">
+		<a asp-controller="Review" asp-action="AllForBook">Управление на рецензии</a>
+	</li>
+</ul>
