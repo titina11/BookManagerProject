@@ -1,7 +1,10 @@
 ﻿using BookManager.Services.Core;
 using BookManager.ViewModels.Author;
 using BookManager.ViewModels.Authors;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BookManager.Controllers
 {
@@ -16,12 +19,20 @@ namespace BookManager.Controllers
             _authorBookService = authorBookService;
         }
 
+        public IActionResult Index()
+        {
+            return RedirectToAction("All");
+        }
+
         public async Task<IActionResult> All()
         {
             var authors = await _authorService.GetAllAsync();
+
+            ViewBag.CurrentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewBag.IsAdmin = User.IsInRole("Admin");
+
             return View(authors);
         }
-
         [HttpGet]
         public async Task<IActionResult> AddBook(Guid authorId)
         {
@@ -53,8 +64,62 @@ namespace BookManager.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            await _authorService.CreateAsync(model);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _authorService.CreateAsync(model, userId);
             return RedirectToAction(nameof(All));
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var author = await _authorService.GetByIdAsync(id);
+            if (author == null) return NotFound();
+
+            var model = new EditAuthorViewModel
+            {
+                Id = author.Id,
+                Name = author.Name
+            };
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> Edit(EditAuthorViewModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            await _authorService.UpdateAsync(model);
+            return RedirectToAction(nameof(All));
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var author = await _authorService.GetByIdAsync(id);
+            if (author == null) return NotFound();
+
+            var model = new DeleteAuthorViewModel
+            {
+                Id = author.Id,
+                Name = author.Name
+            };
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        {
+            var author = await _authorService.GetByIdAsync(id);
+            if (author == null) return NotFound();
+
+            await _authorService.DeleteAsync(id);
+            return RedirectToAction("All");
         }
     }
 }

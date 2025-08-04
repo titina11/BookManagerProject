@@ -24,6 +24,7 @@ public class AuthorService : IAuthorService
             {
                 Id = a.Id,
                 Name = a.Name,
+                CreatedByUserId = a.CreatedByUserId,
                 Books = a.Books
                     .Select(b => new BookShortViewModel
                     {
@@ -60,10 +61,44 @@ public class AuthorService : IAuthorService
         await _context.SaveChangesAsync();
     }
 
-    public async Task CreateAsync(CreateAuthorViewModel model)
+    public async Task CreateAsync(CreateAuthorViewModel model, string createdByUserId)
     {
-        var author = new Author { Id = Guid.NewGuid(), Name = model.Name };
+        var author = new Author
+        {
+            Id = Guid.NewGuid(),
+            Name = model.Name,
+            CreatedByUserId = createdByUserId
+        };
+
         _context.Authors.Add(author);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<EditAuthorViewModel?> GetByIdAsync(Guid id)
+    {
+        var author = await _context.Authors.FindAsync(id);
+        return author == null
+            ? null
+            : new EditAuthorViewModel { Id = author.Id, Name = author.Name };
+    }
+
+    public async Task UpdateAsync(EditAuthorViewModel model)
+    {
+        var author = await _context.Authors.FindAsync(model.Id);
+        if (author != null)
+        {
+            author.Name = model.Name;
+            await _context.SaveChangesAsync();
+        }
+    }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var author = await _context.Authors.FindAsync(id);
+        if (author != null)
+        {
+            _context.Authors.Remove(author);
+            await _context.SaveChangesAsync();
+        }
     }
 }

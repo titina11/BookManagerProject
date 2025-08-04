@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookManager.ViewModels", "B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookManager.GCommon", "BookManager.GCommon\BookManager.GCommon.csproj", "{AD28095D-DD4B-4639-AE92-50F0964C8EB7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookManager.Tests", "BookManager.Tests\BookManager.Tests.csproj", "{18505705-16F7-4DA9-A451-5EF8EECEE8B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{AD28095D-DD4B-4639-AE92-50F0964C8EB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD28095D-DD4B-4639-AE92-50F0964C8EB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD28095D-DD4B-4639-AE92-50F0964C8EB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18505705-16F7-4DA9-A451-5EF8EECEE8B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18505705-16F7-4DA9-A451-5EF8EECEE8B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18505705-16F7-4DA9-A451-5EF8EECEE8B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18505705-16F7-4DA9-A451-5EF8EECEE8B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

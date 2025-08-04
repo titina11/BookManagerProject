@@ -11,6 +11,10 @@ public interface IAuthorService
 
     Task AddBookToAuthorAsync(AddBookToAuthorViewModel model);
 
-    Task CreateAsync(CreateAuthorViewModel model);
+    Task CreateAsync(CreateAuthorViewModel model, string createdByUserId);
+
+    Task<EditAuthorViewModel?> GetByIdAsync(Guid id);
+    Task UpdateAsync(EditAuthorViewModel model);
+    Task DeleteAsync(Guid id);
 
 }
