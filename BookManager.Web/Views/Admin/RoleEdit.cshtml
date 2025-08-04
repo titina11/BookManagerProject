@@ -1,0 +1,45 @@
+﻿@model List<BookManager.ViewModels.Admin.UserWithRoleViewModel>
+
+@{
+	ViewData["Title"] = "Управление на потребители";
+}
+
+<h2>Управление на потребители</h2>
+
+<table class="table table-bordered table-striped">
+	<thead>
+	<tr>
+		<th>Име</th>
+		<th>Имейл</th>
+		<th>Admin?</th>
+		<th>Действие</th>
+	</tr>
+	</thead>
+	<tbody>
+	@foreach (var user in Model)
+	{
+		<tr>
+			<td>@user.UserName</td>
+			<td>@user.Email</td>
+			<td>
+				@if (user.IsAdmin)
+				{
+					<span class="text-success">Да</span>
+				}
+				else
+				{
+					<span class="text-danger">Не</span>
+				}
+			</td>
+			<td>
+				<form asp-action="ToggleAdminRole" method="post">
+					<input type="hidden" name="userId" value="@user.Id" />
+					<button class="btn btn-sm btn-warning" type="submit">
+						@(user.IsAdmin ? "Премахни Admin" : "Направи Admin")
+					</button>
+				</form>
+			</td>
+		</tr>
+	}
+	</tbody>
+</table>
