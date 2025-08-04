@@ -1,0 +1,43 @@
+﻿@model BookManager.ViewModels.Review.EditReviewViewModel
+
+@{
+	ViewData["Title"] = "Редакция на рецензия";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit" method="post">
+	@Html.AntiForgeryToken()
+
+	<input type="hidden" asp-for="Id" />
+	<input type="hidden" asp-for="BookId" />
+	<input type="hidden" asp-for="UserId" />
+
+	<div class="mb-3">
+		<label asp-for="Content" class="form-label"></label>
+		<textarea asp-for="Content" class="form-control" rows="5"></textarea>
+		<span asp-validation-for="Content" class="text-danger"></span>
+	</div>
+
+	<div class="mb-3">
+		<label asp-for="Rating" class="form-label"></label>
+		<select asp-for="Rating" class="form-select">
+			<option value="">-- Избери оценка --</option>
+			@for (int i = 1; i <= 5; i++)
+			{
+				<option value="@i">@i звезди</option>
+			}
+		</select>
+		<span asp-validation-for="Rating" class="text-danger"></span>
+	</div>
+
+	<button type="submit" class="btn btn-success">Запази промените</button>
+	<a asp-action="AllForBook"
+	   asp-controller="Review"
+	   asp-route-bookId="@Model.BookId"
+	   class="btn btn-secondary mt-3">Назад</a>
+</form>
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+}

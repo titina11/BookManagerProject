@@ -27,25 +27,4 @@
 	</div>
 </div>
 
-@inject IReviewService ReviewService
-@{
-	var reviews = await ReviewService.GetReviewsForBookAsync(Model.Id);
-}
 
-<h3>Рецензии</h3>
-
-@if (reviews.Any())
-{
-	foreach (var review in reviews)
-	{
-		<div class="border p-2 mb-2">
-			<strong>@review.UserEmail</strong>:
-			<div>Оценка: @review.Rating / 5</div>
-			<p>@review.Content</p>
-		</div>
-	}
-}
-else
-{
-	<p>Все още няма рецензии за тази книга.</p>
-}

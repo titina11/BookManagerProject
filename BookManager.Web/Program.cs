@@ -2,6 +2,7 @@ using BookManager.Data;
 using BookManager.Data.Models;
 using BookManager.Data.Configuration;
 using BookManager.Services.Core;
+using BookManager.Services.Core.Contracts;
 using BookManager.Web.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

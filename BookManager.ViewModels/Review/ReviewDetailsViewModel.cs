@@ -1,6 +1,6 @@
 ﻿namespace BookManager.ViewModels.Review
 {
-    public class ReviewViewModel
+    public class ReviewDetailsViewModel
     {
         public Guid Id { get; set; }
 
@@ -11,6 +11,5 @@
         public string UserEmail { get; set; } = null!;
 
         public Guid BookId { get; set; }
-
     }
 }

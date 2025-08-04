@@ -1,0 +1,27 @@
+﻿@model BookManager.ViewModels.Review.EditReviewViewModel
+
+@{
+	ViewData["Title"] = "Потвърди изтриване на рецензия";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="alert alert-danger">
+	<strong>Сигурни ли сте, че искате да изтриете тази рецензия?</strong>
+</div>
+
+<div class="mb-3">
+	<label class="form-label">Съдържание</label>
+	<div class="form-control-plaintext">@Model.Content</div>
+</div>
+
+<div class="mb-3">
+	<label class="form-label">Оценка</label>
+	<div class="form-control-plaintext">@Model.Rating звезди</div>
+</div>
+
+<form asp-action="Delete" method="post">
+	<input type="hidden" asp-for="Id" />
+	<button type="submit" class="btn btn-danger">Изтрий</button>
+	<a asp-action="AllForBook" asp-controller="Review" asp-route-bookId="@Model.BookId" class="btn btn-secondary mt-3">Отказ</a>
+</form>

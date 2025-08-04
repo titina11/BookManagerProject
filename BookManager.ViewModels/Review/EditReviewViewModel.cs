@@ -2,9 +2,9 @@
 
 namespace BookManager.ViewModels.Review
 {
-    public class CreateReviewViewModel
+    public class EditReviewViewModel
     {
-        public Guid BookId { get; set; }
+        public Guid Id { get; set; }
 
         [Required(ErrorMessage = "Съдържанието е задължително.")]
         [StringLength(2000, ErrorMessage = "Съдържанието трябва да е до 2000 символа.")]
@@ -13,7 +13,8 @@ namespace BookManager.ViewModels.Review
         [Range(1, 5, ErrorMessage = "Оценката трябва да е между 1 и 5.")]
         public int Rating { get; set; }
 
-        public string BookTitle { get; set; } = string.Empty;
+        public Guid BookId { get; set; }
+
+        public string UserId { get; set; } = null!;
     }
 }
-
