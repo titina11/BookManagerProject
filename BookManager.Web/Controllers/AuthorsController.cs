@@ -58,14 +58,18 @@ namespace BookManager.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateAuthorViewModel model)
         {
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid)
+                return View(model);
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null) return Unauthorized(); 
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
 
-            await _authorService.CreateAsync(model, userId); 
+            await _authorService.CreateAsync(model, userId);
+
             return RedirectToAction(nameof(All));
         }
 

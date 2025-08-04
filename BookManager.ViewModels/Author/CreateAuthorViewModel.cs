@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BookManager.ViewModels.Authors
+namespace BookManager.ViewModels.Author
 {
     public class CreateAuthorViewModel
     {
@@ -8,6 +8,5 @@ namespace BookManager.ViewModels.Authors
         [StringLength(100, MinimumLength = 2)]
         public string Name { get; set; } = null!;
 
-        public string CreatedByUserId { get; set; } = null!;
     }
 }
