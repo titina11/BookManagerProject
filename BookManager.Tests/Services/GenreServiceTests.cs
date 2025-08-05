@@ -5,10 +5,20 @@ using BookManager.Web.Areas.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
-namespace BookManager.Tests;
+namespace BookManager.Tests.Services;
 
 public class GenreServiceTests
 {
+
+    private BookManagerDbContext GetDbContext()
+    {
+        var options = new DbContextOptionsBuilder<BookManagerDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        return new BookManagerDbContext(options);
+    }
+
     [Fact]
     public async Task GetAllAsync_ShouldReturnAllGenres()
     {
@@ -144,6 +154,24 @@ public class GenreServiceTests
     }
 
     [Fact]
+    public async Task UpdateAsync_ShouldDoNothing_WhenGenreNotFound()
+    {
+
+        var context = GetDbContext();
+        var service = new GenreService(context);
+
+        var model = new GenreViewModel
+        {
+            Id = Guid.NewGuid(), 
+            Name = "Несъществуващ жанр"
+        };
+
+        await service.UpdateAsync(model);
+
+        Assert.Empty(context.Genres); 
+    }
+
+    [Fact]
     public async Task DeleteAsync_ShouldRemoveGenre()
     {
         var options = new DbContextOptionsBuilder<BookManagerDbContext>()
@@ -169,5 +197,17 @@ public class GenreServiceTests
             var genre = await context.Genres.FindAsync(genreId);
             Assert.Null(genre);
         }
+    }
+
+    [Fact]
+    public async Task DeleteAsync_ShouldDoNothing_WhenGenreNotFound()
+    {
+        var context = GetDbContext();
+        var service = new GenreService(context);
+        var nonExistentId = Guid.NewGuid();
+
+        await service.DeleteAsync(nonExistentId);
+
+        Assert.Empty(context.Genres); 
     }
 }

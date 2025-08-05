@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace BookManager.Tests.Services.Core
+namespace BookManager.Tests.Services
 {
     public class AdminServiceTests
     {
@@ -80,6 +80,44 @@ namespace BookManager.Tests.Services.Core
 
             Assert.NotNull(userVm);
             Assert.False(userVm.IsAdmin);
+        }
+
+        [Fact]
+        public async Task GetAllUsersAsync_ShouldReturnEmptyList_WhenNoUsersExist()
+        {
+            var (context, userManager) = GetTestEnvironment();
+
+            var service = new AdminService(userManager);
+
+            var result = await service.GetAllUsersAsync();
+
+            Assert.NotNull(result);
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public async Task GetAllUsersAsync_ShouldReturnUserWithIsAdminFalse_WhenUserHasNoRoles()
+        {
+            var (context, userManager) = GetTestEnvironment();
+
+            var testUser = new ApplicationUser
+            {
+                UserName = "user@example.com",
+                Email = "user@example.com",
+                EmailConfirmed = true
+            };
+
+            await userManager.CreateAsync(testUser, "Test123!");
+
+            var service = new AdminService(userManager);
+
+            var result = await service.GetAllUsersAsync();
+
+            Assert.Single(result);
+
+            var userViewModel = result.First();
+            Assert.Equal("user@example.com", userViewModel.Email);
+            Assert.False(userViewModel.IsAdmin); 
         }
 
         [Fact]

@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BookManager.Tests.Services.Core
+namespace BookManager.Tests.Services
 {
     public class ReadBookServiceTests
     {
@@ -55,6 +55,23 @@ namespace BookManager.Tests.Services.Core
             Assert.Equal(userId, userBook.UserId);
             Assert.Equal(bookId, userBook.BookId);
             Assert.Equal(5, userBook.Rating);
+        }
+
+        [Fact]
+        public void ReadingDuration_ShouldBeCorrect()
+        {
+            var start = new DateTime(2024, 1, 1);
+            var end = new DateTime(2024, 1, 5);
+
+            var userBook = new UserBook
+            {
+                StartDate = start,
+                EndDate = end
+            };
+
+            var duration = userBook.ReadingDuration;
+
+            Assert.Equal(TimeSpan.FromDays(4), duration);
         }
 
         [Fact]

@@ -1,7 +1,10 @@
 ﻿using BookManager.Services.Core;
 using BookManager.Services.Core.Contracts;
+using BookManager.ViewModels.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
+namespace BookManager.Web.Controllers;
 
 [Authorize(Roles = "Admin")]
 public class AdminController : Controller
@@ -22,14 +25,35 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> RoleEdit()
     {
-        var users = await _adminService.GetAllUsersAsync();
-        return View("RoleEdit", users); 
+        try
+        {
+            var users = await _adminService.GetAllUsersAsync();
+            return View("RoleEdit", users);
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Грешка при зареждане на потребителите: {ex.Message}";
+            return View("RoleEdit", new List<UserWithRoleViewModel>()); 
+        }
     }
 
     [HttpPost]
     public async Task<IActionResult> ToggleAdminRole(string userId)
     {
-        await _adminService.ToggleAdminRoleAsync(userId);
+        try
+        {
+            var success = await _adminService.ToggleAdminRoleAsync(userId);
+
+            if (!success)
+            {
+                TempData["Error"] = "Неуспешна промяна на ролята. Потребителят не е намерен или е невалиден.";
+            }
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Грешка при промяна на ролята: {ex.Message}";
+        }
+
         return RedirectToAction(nameof(RoleEdit));
     }
 }
