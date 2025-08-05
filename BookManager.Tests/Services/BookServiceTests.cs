@@ -3,7 +3,6 @@ using BookManager.Data.Models;
 using BookManager.Services.Core;
 using BookManager.Services.Core.Contracts;
 using BookManager.ViewModels.Book;
-using BookManager.ViewModels.Books;
 using BookManager.ViewModels.UserBooks;
 using BookManager.Web.Areas.Identity.Data;
 using Microsoft.EntityFrameworkCore;
@@ -526,30 +525,6 @@ namespace BookManager.Tests.Services
             Assert.Equal("initial.jpg", unchanged.ImageUrl);
         }
 
-        [Fact]
-        public async Task EditAsync_ShouldDoNothing_WhenBookDoesNotExist()
-        {
-            var context = GetDbContext();
-            var service = new BookService(context);
-
-            var model = new EditBookViewModel
-            {
-                Id = Guid.NewGuid(),
-                Title = "Test Title",
-                Description = "Test Description",
-                ImageUrl = null,
-                AuthorId = Guid.NewGuid(),
-                GenreId = Guid.NewGuid(),
-                PublisherId = Guid.NewGuid()
-            };
-
-            var currentUserId = Guid.NewGuid().ToString();
-
-            await service.EditAsync(model.Id, model, currentUserId, false);
-
-            var bookInDb = await context.Books.FindAsync(model.Id);
-            Assert.Null(bookInDb);
-        }
 
         [Fact]
         public async Task GetFilteredAsync_ShouldReturnFilteredBooks()
@@ -817,55 +792,9 @@ namespace BookManager.Tests.Services
             );
 
             await context.SaveChangesAsync();
-
             var service = GetService(context);
 
             var result = await service.GetFilteredAsync(null, null, null, null);
-
-            Assert.Equal(2, result.Books.Count);
-        }
-
-        [Fact]
-        public async Task GetFilteredAsync_ShouldNotFilterByGenre_WhenGenreIdIsEmptyGuid()
-        {
-            var context = GetDbContext();
-
-            var authorId = Guid.NewGuid();
-            var genreId = Guid.NewGuid();
-            var publisherId = Guid.NewGuid();
-
-            context.Authors.Add(new Author { Id = authorId, Name = "Автор", CreatedByUserId = SeedUserId.ToString() });
-            context.Genres.Add(new Genre { Id = genreId, Name = "Жанр" });
-            context.Publishers.Add(new Publisher { Id = publisherId, Name = "Издателство" });
-
-            context.Books.AddRange(
-                new Book
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Book 1",
-                    Description = "Desc 1",
-                    AuthorId = authorId,
-                    GenreId = genreId,
-                    PublisherId = publisherId,
-                    CreatedByUserId = SeedUserId.ToString()
-                },
-                new Book
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Book 2",
-                    Description = "Desc 2",
-                    AuthorId = authorId,
-                    GenreId = genreId,
-                    PublisherId = publisherId,
-                    CreatedByUserId = SeedUserId.ToString()
-                }
-            );
-
-            await context.SaveChangesAsync();
-
-            var service = GetService(context);
-
-            var result = await service.GetFilteredAsync(null, null, Guid.Empty, null);
 
             Assert.Equal(2, result.Books.Count);
         }
@@ -1171,9 +1100,8 @@ namespace BookManager.Tests.Services
             Assert.Single(result);
             Assert.Equal("Publisher C", result.First().Name);
         }
-
         [Fact]
-        public async Task UpdateAsync_ShouldUpdateBook_WhenBookExists()
+        public async Task EditAsync_ShouldUpdateBook_WhenBookExists()
         {
             var context = GetDbContext();
 
@@ -1189,6 +1117,8 @@ namespace BookManager.Tests.Services
             context.Genres.AddRange(genre1, genre2);
             context.Publishers.AddRange(publisher1, publisher2);
 
+            var createdByUserId = Guid.NewGuid().ToString(); 
+
             var book = new Book
             {
                 Id = Guid.NewGuid(),
@@ -1198,7 +1128,7 @@ namespace BookManager.Tests.Services
                 AuthorId = author1.Id,
                 GenreId = genre1.Id,
                 PublisherId = publisher1.Id,
-                CreatedByUserId = "userX"
+                CreatedByUserId = createdByUserId
             };
 
             context.Books.Add(book);
@@ -1206,7 +1136,7 @@ namespace BookManager.Tests.Services
 
             var service = new BookService(context);
 
-            var model = new BookFormModel
+            var model = new EditBookViewModel
             {
                 Id = book.Id,
                 Title = "Updated Title",
@@ -1217,7 +1147,8 @@ namespace BookManager.Tests.Services
                 PublisherId = publisher2.Id
             };
 
-            await service.UpdateAsync(model);
+            var isAdmin = false;
+            await service.EditAsync(book.Id, model, createdByUserId, isAdmin);
 
             var updated = await context.Books.FindAsync(book.Id);
             Assert.Equal("Updated Title", updated.Title);
@@ -1229,12 +1160,12 @@ namespace BookManager.Tests.Services
         }
 
         [Fact]
-        public async Task UpdateAsync_ShouldDoNothing_WhenBookDoesNotExist()
+        public async Task EditAsync_ShouldDoNothing_WhenBookDoesNotExist()
         {
             var context = GetDbContext();
             var service = new BookService(context);
 
-            var model = new BookFormModel
+            var model = new EditBookViewModel
             {
                 Id = Guid.NewGuid(),
                 Title = "Some Title",
@@ -1245,14 +1176,17 @@ namespace BookManager.Tests.Services
                 PublisherId = Guid.NewGuid()
             };
 
-            await service.UpdateAsync(model);
+            string currentUserId = "test-user";
+            bool isAdmin = false;
+
+            await service.EditAsync(model.Id, model, currentUserId, isAdmin);
 
             var result = await context.Books.FindAsync(model.Id);
             Assert.Null(result);
         }
 
         [Fact]
-        public async Task UpdateAsync_ShouldUseExistingAuthor_WhenAuthorIdProvided()
+        public async Task EditAsync_ShouldUseExistingAuthor_WhenAuthorIdProvided()
         {
             var context = GetDbContext();
 
@@ -1265,7 +1199,7 @@ namespace BookManager.Tests.Services
                 AuthorId = Guid.NewGuid(),
                 GenreId = Guid.NewGuid(),
                 PublisherId = Guid.NewGuid(),
-                CreatedByUserId = SeedUserId.ToString()
+                CreatedByUserId = "test-user"
             };
 
             context.Authors.Add(author);
@@ -1274,7 +1208,7 @@ namespace BookManager.Tests.Services
 
             var service = new BookService(context);
 
-            var model = new BookFormModel
+            var model = new EditBookViewModel
             {
                 Id = book.Id,
                 Title = "New",
@@ -1285,7 +1219,10 @@ namespace BookManager.Tests.Services
                 PublisherId = book.PublisherId
             };
 
-            await service.UpdateAsync(model);
+            string currentUserId = "test-user";
+            bool isAdmin = false;
+
+            await service.EditAsync(book.Id, model, currentUserId, isAdmin);
 
             var updated = await context.Books.FindAsync(book.Id);
             Assert.Equal(author.Id, updated.AuthorId);

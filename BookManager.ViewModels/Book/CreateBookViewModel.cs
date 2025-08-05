@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using BookManager.ViewModels.Publisher;
 
 namespace BookManager.ViewModels.Book;
 

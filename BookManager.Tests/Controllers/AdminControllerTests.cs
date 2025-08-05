@@ -102,6 +102,27 @@ public class AdminControllerTests
     }
 
     [Fact]
+    public async Task ToggleAdminRole_ShouldSetTempDataError_WhenRoleChangeFails()
+    {
+        var userId = "test-user-id";
+        var adminServiceMock = new Mock<IAdminService>();
+        adminServiceMock.Setup(s => s.ToggleAdminRoleAsync(userId)).ReturnsAsync(false);
+
+        var controller = new AdminController(adminServiceMock.Object);
+
+        var tempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
+        controller.TempData = tempData;
+
+        var result = await controller.ToggleAdminRole(userId);
+
+        Assert.True(controller.TempData.ContainsKey("Error"));
+        Assert.Equal("Неуспешна промяна на ролята. Потребителят не е намерен или е невалиден.", controller.TempData["Error"]);
+        var redirect = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal(nameof(AdminController.RoleEdit), redirect.ActionName);
+    }
+
+
+    [Fact]
     public async Task Index_ShouldReturnViewWithUsers()
     {
         var users = new List<UserWithRoleViewModel>

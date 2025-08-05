@@ -1,4 +1,6 @@
-﻿namespace BookManager.ViewModels.Book
+﻿using BookManager.ViewModels.Publisher;
+
+namespace BookManager.ViewModels.Book
 {
     public class BookFormModel
     {
@@ -14,8 +16,8 @@
         public Guid GenreId { get; set; }
         public Guid PublisherId { get; set; }
 
-        public IEnumerable<AuthorDropdownViewModel> Authors { get; set; } = new List<AuthorDropdownViewModel>();
-        public IEnumerable<GenreDropdownViewModel> Genres { get; set; } = new List<GenreDropdownViewModel>();
-        public IEnumerable<PublisherDropdownViewModel> Publishers { get; set; } = new List<PublisherDropdownViewModel>();
+        public List<AuthorDropdownViewModel> Authors { get; set; } = new();
+        public List<GenreDropdownViewModel> Genres { get; set; } = new();
+        public List<PublisherDropdownViewModel> Publishers { get; set; } = new();
     }
 }

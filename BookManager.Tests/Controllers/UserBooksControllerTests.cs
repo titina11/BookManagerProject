@@ -139,6 +139,42 @@ public class UserBooksControllerTests
     }
 
     [Fact]
+    public async Task Add_Post_ShouldReturnViewWithBookTitle_WhenModelStateIsInvalid()
+    {
+        var options = new DbContextOptionsBuilder<BookManagerDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        using var context = new BookManagerDbContext(options);
+
+        var bookId = Guid.NewGuid();
+        context.Books.Add(new Book { Id = bookId, Title = "Test Book", Description = "Test Description", CreatedByUserId = "user-123",
+        });
+        await context.SaveChangesAsync();
+
+        var controller = new UserBooksController(context);
+
+        var invalidModel = new UserBookListViewModel
+        {
+            BookId = bookId,
+            StartDate = DateTime.Now,
+            EndDate = DateTime.Now.AddDays(-1), 
+            Rating = 5
+        };
+
+        controller.ModelState.AddModelError("ReadEndDate", "End date must be after start date.");
+
+        var result = await controller.Add(invalidModel);
+
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var returnedModel = Assert.IsType<UserBookListViewModel>(viewResult.Model);
+
+        Assert.Equal(invalidModel.BookId, returnedModel.BookId);
+        Assert.Equal("Test Book", controller.ViewBag.BookTitle);
+    }
+
+
+    [Fact]
     public async Task Add_Post_ShouldAddUserBookAndRedirect_WhenModelIsValid()
     {
         var context = GetDbContext();

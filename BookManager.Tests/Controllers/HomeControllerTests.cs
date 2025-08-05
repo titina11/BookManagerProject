@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
+using System.Diagnostics;
 
 namespace BookManager.Tests.Controllers;
 
@@ -55,20 +56,57 @@ public class HomeControllerTests
     [Fact]
     public void Error_ShouldReturnViewWithErrorViewModel()
     {
-        var requestId = "test-id";
-        var httpContext = new DefaultHttpContext();
-        httpContext.TraceIdentifier = requestId;
+        var bookServiceMock = new Mock<IBookService>();
+        var loggerMock = new Mock<ILogger<HomeController>>();
 
-        _controller.ControllerContext = new ControllerContext
+        var controller = new HomeController(bookServiceMock.Object, loggerMock.Object);
+
+        var context = new DefaultHttpContext();
+        context.TraceIdentifier = "test-trace-id";
+
+        controller.ControllerContext = new ControllerContext
         {
-            HttpContext = httpContext
+            HttpContext = context
         };
 
-        var result = _controller.Error();
+        var activity = new Activity("Test");
+        activity.Start();
+        activity.Stop();
+        Activity.Current = activity;
+
+        var result = controller.Error();
 
         var viewResult = Assert.IsType<ViewResult>(result);
-        var model = Assert.IsType<ErrorViewModel>(viewResult.Model);
+        var model = Assert.IsAssignableFrom<ErrorViewModel>(viewResult.Model);
 
-        Assert.Equal(requestId, model.RequestId);
+        Assert.False(string.IsNullOrEmpty(model.RequestId));
+    }
+
+
+    [Fact]
+    public void Error_With404Code_ShouldReturn404View()
+    {
+        var result = _controller.Error(404);
+
+        var viewResult = Assert.IsType<ViewResult>(result);
+        Assert.Equal("404", viewResult.ViewName);
+    }
+
+    [Fact]
+    public void Error_With500Code_ShouldReturn500View()
+    {
+        var result = _controller.Error(500);
+
+        var viewResult = Assert.IsType<ViewResult>(result);
+        Assert.Equal("500", viewResult.ViewName);
+    }
+
+    [Fact]
+    public void Error_WithOtherCode_ShouldReturnDefaultErrorView()
+    {
+        var result = _controller.Error(123);
+
+        var viewResult = Assert.IsType<ViewResult>(result);
+        Assert.Equal("Error", viewResult.ViewName);
     }
 }

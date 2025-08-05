@@ -1,21 +1,22 @@
-﻿@model BookManager.ViewModels.Books.BookFilterViewModel
+﻿@using BookManager.ViewModels.Publisher
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model BookManager.ViewModels.Book.BookAllViewModel
 
 @{
     ViewData["Title"] = "Всички книги";
     var currentUserId = ViewBag.CurrentUserId as string;
     var isAdmin = ViewBag.IsAdmin as bool? ?? false;
+    var publishers = ViewBag.Publishers as List<PublisherViewModel>;
 }
 
 <h2>@ViewData["Title"]</h2>
 
 <a asp-controller="Book" asp-action="Create" class="btn btn-success mb-3">➕ Добави нова книга</a>
 
-<form method="get" asp-controller="Book" asp-action="All" class="mb-4">
-	<div class="row g-2">
-	</div>
-	<div class="col-md-4">
-		<input type="text" name="title" value="@Model.SearchTitle" placeholder="Търси по заглавие…" class="form-control" />
-	</div>
+<form method="get" asp-controller="Book" asp-action="All" class="row g-2 mb-4">
+    <div class="col-md-4">
+        <input type="text" name="title" value="@Model.SearchTitle" placeholder="Търси по заглавие…" class="form-control" />
+    </div>
 
     <div class="col-md-3">
         <select name="authorId" class="form-select">
@@ -81,15 +82,15 @@ else
                             <strong>Издателство:</strong> @book.Publisher
                         </p>
                         <div class="mt-auto">
-	                        @if (book.CreatedByUserId == currentUserId || isAdmin)
-	                        {
-		                        <a asp-controller="Book" asp-action="Edit" asp-route-id="@book.Id" class="btn btn-sm btn-outline-warning me-1">Редактирай</a>
-		                        <a asp-controller="Book" asp-action="Delete" asp-route-id="@book.Id" class="btn btn-sm btn-outline-danger">Изтрий</a>
-	                        }
+                            @if (book.CreatedByUserId == currentUserId || isAdmin)
+                            {
+                                <a asp-controller="Book" asp-action="Edit" asp-route-id="@book.Id" class="btn btn-sm btn-outline-warning me-1">Редактирай</a>
+                                <a asp-controller="Book" asp-action="Delete" asp-route-id="@book.Id" class="btn btn-sm btn-outline-danger">Изтрий</a>
+                            }
 
-	                        <a asp-controller="Book" asp-action="Details" asp-route-id="@book.Id" asp-route-returnUrl="/Book/All" class="btn btn-sm btn-outline-primary me-1">Детайли</a>
-	                        <a asp-controller="Review" asp-action="AllForBook" asp-route-bookId="@book.Id" class="btn btn-outline-info btn-sm mt-2">Виж рецензии</a>
-	                        <a asp-controller="UserBooks" asp-action="Add" asp-route-bookId="@book.Id" class="btn btn-sm btn-outline-success me-1">Добави в дневника</a>
+                            <a asp-controller="Book" asp-action="Details" asp-route-id="@book.Id" asp-route-returnUrl="/Book/All" class="btn btn-sm btn-outline-primary me-1">Детайли</a>
+                            <a asp-controller="Review" asp-action="AllForBook" asp-route-bookId="@book.Id" class="btn btn-outline-info btn-sm mt-2">Виж рецензии</a>
+                            <a asp-controller="UserBooks" asp-action="Add" asp-route-bookId="@book.Id" class="btn btn-sm btn-outline-success me-1">Добави в дневника</a>
                         </div>
                     </div>
                 </div>
@@ -97,3 +98,49 @@ else
         }
     </div>
 }
+
+<nav>
+    <ul class="pagination mt-4">
+        @if (Model.HasPreviousPage)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="All"
+                   asp-route-page="@(Model.PageNumber - 1)"
+                   asp-route-title="@Model.SearchTitle"
+                   asp-route-authorId="@Model.SelectedAuthorId"
+                   asp-route-genreId="@Model.SelectedGenreId"
+                   asp-route-publisherId="@Model.SelectedPublisherId">
+                    Предишна
+                </a>
+            </li>
+        }
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                <a class="page-link" asp-action="All"
+                   asp-route-page="@i"
+                   asp-route-title="@Model.SearchTitle"
+                   asp-route-authorId="@Model.SelectedAuthorId"
+                   asp-route-genreId="@Model.SelectedGenreId"
+                   asp-route-publisherId="@Model.SelectedPublisherId">
+                    @i
+                </a>
+            </li>
+        }
+
+        @if (Model.HasNextPage)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="All"
+                   asp-route-page="@(Model.PageNumber + 1)"
+                   asp-route-title="@Model.SearchTitle"
+                   asp-route-authorId="@Model.SelectedAuthorId"
+                   asp-route-genreId="@Model.SelectedGenreId"
+                   asp-route-publisherId="@Model.SelectedPublisherId">
+                    Следваща
+                </a>
+            </li>
+        }
+    </ul>
+</nav>

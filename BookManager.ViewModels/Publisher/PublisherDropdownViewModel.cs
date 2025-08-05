@@ -1,4 +1,4 @@
-﻿namespace BookManager.ViewModels.Book
+﻿namespace BookManager.ViewModels.Publisher
 {
     public class PublisherDropdownViewModel
     {

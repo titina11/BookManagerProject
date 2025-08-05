@@ -1,11 +1,16 @@
-﻿using BookManager.ViewModels.Book;
-using BookManager.ViewModels.Books;
+﻿using BookManager.Services.Core.Contracts;
+using BookManager.ViewModels.Author;
+using BookManager.ViewModels.Book;
+using BookManager.ViewModels.Genre;
+using BookManager.ViewModels.Publisher;
+using BookManager.ViewModels.Shared;
 using BookManager.Web.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Moq;
 using System.Security.Claims;
+using BookManager.Data.Models;
 
 namespace BookManager.Tests.Controllers;
 
@@ -13,49 +18,92 @@ public class BookControllerTests
 {
     private readonly Mock<IBookService> _bookServiceMock;
     private readonly BookController _controller;
+    private readonly Mock<IPublisherService> _publisherServiceMock;
+    private readonly Mock<IAuthorService> _authorServiceMock;
+    private readonly Mock<IGenreService> _genreServiceMock;
+    private readonly string _testUserId = "test-user-id";
 
     public BookControllerTests()
     {
         _bookServiceMock = new Mock<IBookService>();
-        _controller = new BookController(_bookServiceMock.Object);
+        _publisherServiceMock = new Mock<IPublisherService>();
+        _authorServiceMock = new Mock<IAuthorService>();
+        _genreServiceMock = new Mock<IGenreService>();
 
-        var testUser = new ClaimsPrincipal(new ClaimsIdentity(new[]
+        _controller = new BookController(
+            _bookServiceMock.Object,
+            _publisherServiceMock.Object,
+            _authorServiceMock.Object,
+            _genreServiceMock.Object
+        );
+
+        var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, "test-user-id"),
+            new Claim(ClaimTypes.NameIdentifier, _testUserId),
             new Claim(ClaimTypes.Role, "Admin")
         }, "mock"));
 
         _controller.ControllerContext = new ControllerContext
         {
-            HttpContext = new DefaultHttpContext { User = testUser }
+            HttpContext = new DefaultHttpContext { User = user }
         };
     }
-
     [Fact]
     public async Task All_ShouldReturnViewWithFilteredBooksAndSetViewBag()
     {
-        var filteredModel = new BookFilterViewModel
+        var bookId = Guid.NewGuid();
+        var testUserId = "test-user-id";
+
+        var filteredModel = new BookAllViewModel
         {
             Books = new List<BookViewModel>
+        {
+            new BookViewModel
             {
-                new BookViewModel { Id = Guid.NewGuid(), Title = "Test Book" }
-            },
-            Authors = new List<AuthorDropdownViewModel>(),
-            Genres = new List<GenreDropdownViewModel>(),
-            Publishers = new List<PublisherDropdownViewModel>()
+                Id = bookId,
+                Title = "Test Book",
+                CreatedByUserId = testUserId,
+                Author = "Author",
+                Genre = "Genre",
+                Publisher = "Publisher"
+            }
+        },
+            PageNumber = 1,
+            TotalPages = 1,
+            SearchTitle = null,
+            SelectedAuthorId = null,
+            SelectedGenreId = null,
+            SelectedPublisherId = null,
+            Authors = new List<AuthorListViewModel>
+        {
+            new AuthorListViewModel { Id = Guid.NewGuid(), Name = "Author A" }
+        },
+            Genres = new List<GenreViewModel>
+        {
+            new GenreViewModel { Id = Guid.NewGuid(), Name = "Genre A" }
+        },
+            Publishers = new List<PublisherViewModel>
+        {
+            new PublisherViewModel { Id = Guid.NewGuid(), Name = "Publisher A" }
+        }
         };
 
         _bookServiceMock
-            .Setup(s => s.GetFilteredAsync(null, null, null, null))
+            .Setup(s => s.GetFilteredAsync(null, null, null, null, 1, 5))
             .ReturnsAsync(filteredModel);
 
-        var controller = new BookController(_bookServiceMock.Object);
+        var controller = new BookController(
+            _bookServiceMock.Object,
+            _publisherServiceMock.Object,
+            _authorServiceMock.Object,
+            _genreServiceMock.Object
+        );
 
         var testUser = new ClaimsPrincipal(new ClaimsIdentity(new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, "test-user-id"),
-            new Claim(ClaimTypes.Role, "Admin")
-        }, "mock"));
+        new Claim(ClaimTypes.NameIdentifier, testUserId),
+        new Claim(ClaimTypes.Role, "Admin")
+    }, "mock"));
 
         controller.ControllerContext = new ControllerContext
         {
@@ -65,12 +113,14 @@ public class BookControllerTests
         var result = await controller.All(null, null, null, null);
 
         var viewResult = Assert.IsType<ViewResult>(result);
-        var model = Assert.IsType<BookFilterViewModel>(viewResult.Model);
-        Assert.Single(model.Books);
+        var model = Assert.IsType<BookAllViewModel>(viewResult.Model);
 
-        Assert.Equal("test-user-id", controller.ViewBag.CurrentUserId);
+        Assert.Single(model.Books);
+        Assert.Equal("Test Book", model.Books[0].Title);
+        Assert.Equal(testUserId, controller.ViewBag.CurrentUserId);
         Assert.True((bool)controller.ViewBag.IsAdmin);
     }
+
 
     [Fact]
     public async Task Create_Get_ShouldReturnViewWithModel()
@@ -95,15 +145,23 @@ public class BookControllerTests
             .Setup(s => s.GetCreateModelAsync())
             .ReturnsAsync(model);
 
-        var result = await _controller.Create();
+        var controller = new BookController(
+            _bookServiceMock.Object,
+            _publisherServiceMock.Object,
+            _authorServiceMock.Object,
+            _genreServiceMock.Object
+        );
+
+        var result = await controller.Create();
 
         var viewResult = Assert.IsType<ViewResult>(result);
-        var returnedModel = Assert.IsAssignableFrom<CreateBookViewModel>(viewResult.Model);
+        var returnedModel = Assert.IsType<CreateBookViewModel>(viewResult.Model);
 
         Assert.Single(returnedModel.Authors);
         Assert.Single(returnedModel.Genres);
         Assert.Single(returnedModel.Publishers);
     }
+
 
     [Fact]
     public async Task Create_Post_ShouldReturnView_WhenModelIsInvalid()
@@ -120,8 +178,10 @@ public class BookControllerTests
 
         _bookServiceMock.Setup(s => s.GetAuthorsAsync())
             .ReturnsAsync(new List<AuthorDropdownViewModel> { new() { Id = Guid.NewGuid(), Name = "A1" } });
+
         _bookServiceMock.Setup(s => s.GetGenresAsync())
             .ReturnsAsync(new List<GenreDropdownViewModel> { new() { Id = Guid.NewGuid(), Name = "G1" } });
+
         _bookServiceMock.Setup(s => s.GetPublishersAsync())
             .ReturnsAsync(new List<PublisherDropdownViewModel> { new() { Id = Guid.NewGuid(), Name = "P1" } });
 
@@ -135,6 +195,7 @@ public class BookControllerTests
         Assert.NotEmpty(returnedModel.Publishers);
     }
 
+
     [Fact]
     public async Task Create_Post_ShouldReturnUnauthorized_WhenUserNotLoggedIn()
     {
@@ -146,10 +207,16 @@ public class BookControllerTests
             PublisherId = Guid.NewGuid()
         };
 
-        var controllerNoUser = new BookController(_bookServiceMock.Object);
+        var controllerNoUser = new BookController(
+            _bookServiceMock.Object,
+            _publisherServiceMock.Object,
+            _authorServiceMock.Object,
+            _genreServiceMock.Object
+        );
+
         controllerNoUser.ControllerContext = new ControllerContext
         {
-            HttpContext = new DefaultHttpContext() 
+            HttpContext = new DefaultHttpContext()
         };
 
         var result = await controllerNoUser.Create(model);
@@ -170,11 +237,13 @@ public class BookControllerTests
 
         var result = await _controller.Create(model);
 
-        _bookServiceMock.Verify(s => s.CreateAsync(model, "test-user-id"), Times.Once);
+        _bookServiceMock.Verify(
+            s => s.CreateAsync(model, _testUserId), Times.Once);
 
         var redirectResult = Assert.IsType<RedirectToActionResult>(result);
         Assert.Equal("All", redirectResult.ActionName);
     }
+
 
     [Fact]
     public async Task Edit_Get_ShouldReturnNotFound_WhenEditModelIsNull()
@@ -190,37 +259,119 @@ public class BookControllerTests
     }
 
     [Fact]
+    public async Task Create_Post_ShouldReturnView_WhenGenreIdIsNull()
+    {
+        var model = new CreateBookViewModel
+        {
+            Title = "Book without Genre",
+            AuthorId = Guid.NewGuid(),
+            GenreId = null,
+            PublisherId = Guid.NewGuid()
+        };
+
+        _controller.ModelState.AddModelError("GenreId", "Required");
+
+        _bookServiceMock.Setup(s => s.GetAuthorsAsync())
+            .ReturnsAsync(new List<AuthorDropdownViewModel> { new() { Id = Guid.NewGuid(), Name = "Author" } });
+
+        _bookServiceMock.Setup(s => s.GetGenresAsync())
+            .ReturnsAsync(new List<GenreDropdownViewModel>());
+
+        _bookServiceMock.Setup(s => s.GetPublishersAsync())
+            .ReturnsAsync(new List<PublisherDropdownViewModel>());
+
+        var result = await _controller.Create(model);
+
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var returnedModel = Assert.IsAssignableFrom<CreateBookViewModel>(viewResult.Model);
+
+        Assert.NotEmpty(returnedModel.Authors);
+        Assert.NotNull(returnedModel.Genres);
+        Assert.NotNull(returnedModel.Publishers);
+        Assert.True(_controller.ModelState.ContainsKey(nameof(model.GenreId)));
+    }
+
+    [Fact]
+    public async Task Create_Post_ShouldReturnView_WhenPublisherIdIsNull()
+    {
+        var model = new CreateBookViewModel
+        {
+            Title = "Book without Publisher",
+            AuthorId = Guid.NewGuid(),
+            GenreId = Guid.NewGuid(),
+            PublisherId = null
+        };
+
+        _controller.ModelState.AddModelError("PublisherId", "Required");
+
+        _bookServiceMock.Setup(s => s.GetAuthorsAsync())
+            .ReturnsAsync(new List<AuthorDropdownViewModel> { new() { Id = Guid.NewGuid(), Name = "Author" } });
+
+        _bookServiceMock.Setup(s => s.GetGenresAsync())
+            .ReturnsAsync(new List<GenreDropdownViewModel>());
+
+        _bookServiceMock.Setup(s => s.GetPublishersAsync())
+            .ReturnsAsync(new List<PublisherDropdownViewModel>());
+
+        var result = await _controller.Create(model);
+
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var returnedModel = Assert.IsAssignableFrom<CreateBookViewModel>(viewResult.Model);
+
+        Assert.NotEmpty(returnedModel.Authors);
+        Assert.NotNull(returnedModel.Genres);
+        Assert.NotNull(returnedModel.Publishers);
+        Assert.True(_controller.ModelState.ContainsKey(nameof(model.PublisherId)));
+    }
+
+
+    [Fact]
     public async Task Edit_Get_ShouldReturnForbid_WhenUserIsNotOwnerOrAdmin()
     {
         var bookId = Guid.NewGuid();
 
-        var mockService = new Mock<IBookService>();
-        mockService.Setup(s => s.GetEditModelAsync(bookId))
+        _bookServiceMock.Setup(s => s.GetEditModelAsync(bookId))
             .ReturnsAsync(new EditBookViewModel());
 
-        mockService.Setup(s => s.GetByIdAsync(bookId))
+        _bookServiceMock.Setup(s => s.GetByIdAsync(bookId))
             .ReturnsAsync(new BookViewModel
             {
                 Id = bookId,
-                CreatedByUserId = "another-user-id" 
+                CreatedByUserId = "another-user-id"
             });
 
-        var controller = new BookController(mockService.Object);
-
-        var fakeUser = new ClaimsPrincipal(new ClaimsIdentity(new[]
+        var nonAdminUser = new ClaimsPrincipal(new ClaimsIdentity(new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, "test-user-id") 
+            new Claim(ClaimTypes.NameIdentifier, "test-user-id"),
+            new Claim(ClaimTypes.Role, "User")
         }, "mock"));
 
-        controller.ControllerContext = new ControllerContext
+        _controller.ControllerContext = new ControllerContext
         {
-            HttpContext = new DefaultHttpContext { User = fakeUser }
+            HttpContext = new DefaultHttpContext { User = nonAdminUser }
         };
 
-        var result = await controller.Edit(bookId);
+        var result = await _controller.Edit(bookId);
 
-        Assert.IsType<ForbidResult>(result); 
+        Assert.IsType<ForbidResult>(result);
     }
+
+    [Fact]
+    public async Task Edit_Get_ShouldReturnForbid_WhenBookIsNull()
+    {
+        var bookId = Guid.NewGuid();
+
+        _bookServiceMock.Setup(s => s.GetEditModelAsync(bookId))
+            .ReturnsAsync(new EditBookViewModel { Title = "Some Book" });
+
+        _bookServiceMock.Setup(s => s.GetByIdAsync(bookId))
+            .ReturnsAsync((BookViewModel?)null); 
+
+        var result = await _controller.Edit(bookId);
+
+        Assert.IsType<ForbidResult>(result);
+    }
+
 
     [Fact]
     public async Task Edit_Get_ShouldReturnView_WhenUserIsOwner()
@@ -234,7 +385,7 @@ public class BookControllerTests
             .ReturnsAsync(new BookViewModel
             {
                 Id = bookId,
-                CreatedByUserId = "test-user-id"
+                CreatedByUserId = _testUserId
             });
 
         var result = await _controller.Edit(bookId);
@@ -274,6 +425,7 @@ public class BookControllerTests
         var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
         {
             new Claim(ClaimTypes.NameIdentifier, "test-user-id"),
+            new Claim(ClaimTypes.Role, "User")
         }, "mock"));
 
         _controller.ControllerContext = new ControllerContext
@@ -322,6 +474,7 @@ public class BookControllerTests
         Assert.NotEmpty(returnedModel.Publishers);
     }
 
+
     [Fact]
     public async Task Edit_Post_ShouldCallEditAndRedirect_WhenModelIsValidAndUserIsOwner()
     {
@@ -338,12 +491,12 @@ public class BookControllerTests
             .ReturnsAsync(new BookViewModel
             {
                 Id = bookId,
-                CreatedByUserId = "test-user-id"
+                CreatedByUserId = _testUserId
             });
 
         var result = await _controller.Edit(bookId, model);
 
-        _bookServiceMock.Verify(s => s.EditAsync(bookId, model, "test-user-id", true), Times.Once);
+        _bookServiceMock.Verify(s => s.EditAsync(bookId, model, _testUserId, true), Times.Once);
 
         var redirect = Assert.IsType<RedirectToActionResult>(result);
         Assert.Equal("All", redirect.ActionName);
@@ -353,6 +506,7 @@ public class BookControllerTests
     public async Task Delete_ShouldReturnForbid_WhenBookIsNull()
     {
         var bookId = Guid.NewGuid();
+
         _bookServiceMock.Setup(s => s.GetByIdAsync(bookId))
             .ReturnsAsync((BookViewModel?)null);
 
@@ -388,6 +542,7 @@ public class BookControllerTests
         Assert.IsType<ForbidResult>(result);
     }
 
+
     [Fact]
     public async Task Delete_ShouldReturnView_WhenUserIsOwner()
     {
@@ -420,6 +575,7 @@ public class BookControllerTests
         Assert.Equal(book, viewResult.Model);
     }
 
+
     [Fact]
     public async Task ConfirmDelete_ShouldDeleteBook_WhenUserIsOwner()
     {
@@ -435,7 +591,7 @@ public class BookControllerTests
         _bookServiceMock.Setup(s => s.GetByIdAsync(bookId))
             .ReturnsAsync(book);
 
-        var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+        var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
         {
             new Claim(ClaimTypes.NameIdentifier, userId)
         }, "mock"));
@@ -448,9 +604,11 @@ public class BookControllerTests
         var result = await _controller.ConfirmDelete(bookId);
 
         _bookServiceMock.Verify(s => s.DeleteAsync(bookId), Times.Once);
+
         var redirect = Assert.IsType<RedirectToActionResult>(result);
         Assert.Equal(nameof(_controller.All), redirect.ActionName);
     }
+
 
     [Fact]
     public async Task ConfirmDelete_ShouldReturnForbid_WhenUserIsNotOwnerOrAdmin()
@@ -465,10 +623,10 @@ public class BookControllerTests
         _bookServiceMock.Setup(s => s.GetByIdAsync(bookId))
             .ReturnsAsync(book);
 
-        var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+        var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
         {
             new Claim(ClaimTypes.NameIdentifier, "not-the-creator"),
-            new Claim(ClaimTypes.Role, "User")
+            new Claim(ClaimTypes.Role, "User") 
         }, "mock"));
 
         _controller.ControllerContext = new ControllerContext
@@ -481,6 +639,33 @@ public class BookControllerTests
         Assert.IsType<ForbidResult>(result);
         _bookServiceMock.Verify(s => s.DeleteAsync(It.IsAny<Guid>()), Times.Never);
     }
+
+    [Fact]
+    public async Task ConfirmDelete_ShouldReturnForbid_WhenBookIsNull()
+    {
+        var bookId = Guid.NewGuid();
+
+        _bookServiceMock.Setup(s => s.GetByIdAsync(bookId))
+            .ReturnsAsync((BookViewModel?)null); 
+
+        var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, "some-user-id"),
+            new Claim(ClaimTypes.Role, "Admin")
+        }, "mock"));
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = user }
+        };
+
+        var result = await _controller.ConfirmDelete(bookId);
+
+        Assert.IsType<ForbidResult>(result);
+        _bookServiceMock.Verify(s => s.DeleteAsync(It.IsAny<Guid>()), Times.Never);
+    }
+
+
 
     [Fact]
     public async Task Details_ShouldReturnNotFound_WhenBookDoesNotExist()
@@ -499,6 +684,7 @@ public class BookControllerTests
 
         Assert.IsType<NotFoundResult>(result);
     }
+
 
     [Fact]
     public async Task Details_ShouldReturnView_WhenBookExists()
@@ -525,5 +711,6 @@ public class BookControllerTests
         Assert.Equal("Test Book", model.Title);
         Assert.Equal(bookId, model.Id);
     }
+
 
 }

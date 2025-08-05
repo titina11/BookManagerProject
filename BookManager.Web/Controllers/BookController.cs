@@ -1,5 +1,6 @@
 ﻿using BookManager.Data.Models;
 using BookManager.Services.Core;
+using BookManager.Services.Core.Contracts;
 using BookManager.ViewModels.Book;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,17 +13,29 @@ namespace BookManager.Web.Controllers
     public class BookController : Controller
     {
         private readonly IBookService _bookService;
+        private readonly IPublisherService _publisherService;
+        private readonly IAuthorService _authorService;
+        private readonly IGenreService _genreService;
 
-        public BookController(IBookService bookService)
+        public BookController(
+            IBookService bookService,
+            IPublisherService publisherService,
+            IAuthorService authorService,
+            IGenreService genreService)
         {
             _bookService = bookService;
+            _publisherService = publisherService;
+            _authorService = authorService;
+            _genreService = genreService;
         }
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> All(string? title, Guid? authorId, Guid? genreId, Guid? publisherId)
+        public async Task<IActionResult> All(string? title, Guid? authorId, Guid? genreId, Guid? publisherId, int page = 1)
         {
-            var model = await _bookService.GetFilteredAsync(title, authorId, genreId, publisherId);
+            int pageSize = 5;
+
+            var model = await _bookService.GetFilteredAsync(title, authorId, genreId, publisherId, page, pageSize);
 
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var isAdmin = User.IsInRole("Admin");
@@ -91,12 +104,11 @@ namespace BookManager.Web.Controllers
         public async Task<IActionResult> Edit(Guid id, EditBookViewModel model)
         {
             var book = await _bookService.GetByIdAsync(id);
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier); 
+            var isAdmin = User.IsInRole("Admin");                               
 
-            if (book == null || (book.CreatedByUserId != userId && !User.IsInRole("Admin")))
-            {
+            if (book == null || (book.CreatedByUserId != currentUserId && !isAdmin))
                 return Forbid();
-            }
 
             if (!ModelState.IsValid)
             {
@@ -106,8 +118,7 @@ namespace BookManager.Web.Controllers
                 return View(model);
             }
 
-            var isAdmin = User.IsInRole("Admin");
-            await _bookService.EditAsync(id, model, userId, isAdmin); 
+            await _bookService.EditAsync(id, model, currentUserId, isAdmin); 
 
             return RedirectToAction(nameof(All));
         }
