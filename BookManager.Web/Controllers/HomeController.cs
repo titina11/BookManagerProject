@@ -35,5 +35,14 @@ namespace BookManager.Web.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [Route("Home/Error/{code:int}")]
+        public IActionResult Error(int code)
+        {
+            if (code == 404) return View("404");
+            if (code == 500) return View("500");
+
+            return View("Error");
+        }
     }
 }

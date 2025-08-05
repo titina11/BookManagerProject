@@ -55,8 +55,16 @@ else
     app.UseHsts();
 }
 
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error/500");
+    app.UseHsts();
+}
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
 
 app.UseRouting();
 
