@@ -60,5 +60,19 @@ public class PublisherServiceTests
         Assert.True(result);
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public async Task ExistsByNameAsync_ShouldReturnFalse_WhenNameIsNullOrWhitespace(string input)
+    {
+        var context = GetDbContext();
+        var service = new PublisherService(context);
+
+        var result = await service.ExistsByNameAsync(input);
+
+        Assert.False(result);
+    }
+
 
 }
