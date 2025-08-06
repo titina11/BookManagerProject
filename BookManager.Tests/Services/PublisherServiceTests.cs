@@ -61,6 +61,51 @@ public class PublisherServiceTests
         Assert.True(result);
     }
 
+    [Fact]
+    public async Task GetByIdAsync_ShouldReturnCorrectPublisher()
+    {
+        var context =GetDbContext();
+        var publisher = new Publisher { Id = Guid.NewGuid(), Name = "Test Publisher" };
+        context.Publishers.Add(publisher);
+        await context.SaveChangesAsync();
+
+        var service = new PublisherService(context);
+
+        var result = await service.GetByIdAsync(publisher.Id);
+
+        Assert.NotNull(result);
+        Assert.Equal(publisher.Name, result!.Name);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_ShouldReturnNull_WhenPublisherNotFound()
+    {
+        var dbContext = GetDbContext();
+        var service = new PublisherService(dbContext);
+
+        var result = await service.GetByIdAsync(Guid.NewGuid());
+
+        Assert.Null(result);
+    }
+    [Fact]
+    public async Task GetAllAsync_ShouldReturnAllPublishersAsDropdownViewModel()
+    {
+        var context = GetDbContext();
+
+        context.Publishers.AddRange(
+            new Publisher { Id = Guid.NewGuid(), Name = "Издателство А" },
+            new Publisher { Id = Guid.NewGuid(), Name = "Издателство Б" });
+
+        await context.SaveChangesAsync();
+
+        var service = new PublisherService(context);
+
+        var result = await service.GetAllAsync();
+
+        Assert.Equal(2, result.Count);
+        Assert.All(result, p => Assert.IsType<PublisherDropdownViewModel>(p));
+    }
+
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -75,5 +120,76 @@ public class PublisherServiceTests
         Assert.False(result);
     }
 
+    [Fact]
+    public async Task CreateAsync_ShouldAddPublisher()
+    {
+        var context = GetDbContext();
+        var service = new PublisherService(context);
+
+        var model = new CreatePublisherViewModel { Name = "New Publisher" };
+        await service.CreateAsync(model);
+
+        var result = await context.Publishers.FirstOrDefaultAsync(p => p.Name == "New Publisher");
+        Assert.NotNull(result);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldChangePublisherName()
+    {
+        var context = GetDbContext();
+        var publisher = new Publisher { Id = Guid.NewGuid(), Name = "Old Name" };
+        context.Publishers.Add(publisher);
+        await context.SaveChangesAsync();
+
+        var service = new PublisherService(context);
+        var updatedModel = new PublisherViewModel { Id = publisher.Id, Name = "New Name" };
+        await service.UpdateAsync(updatedModel);
+
+        var updated = await context.Publishers.FindAsync(publisher.Id);
+        Assert.Equal("New Name", updated!.Name);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldNotThrow_WhenPublisherNotFound()
+    {
+        var dbContext = GetDbContext();
+        var service = new PublisherService(dbContext);
+
+        var model = new PublisherViewModel
+        {
+            Id = Guid.NewGuid(),
+            Name = "Does Not Exist"
+        };
+
+        var exception = await Record.ExceptionAsync(() => service.UpdateAsync(model));
+        Assert.Null(exception);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_ShouldRemovePublisher()
+    {
+        var context = GetDbContext();
+        var publisher = new Publisher { Id = Guid.NewGuid(), Name = "To Be Deleted" };
+        context.Publishers.Add(publisher);
+        await context.SaveChangesAsync();
+
+        var service = new PublisherService(context);
+        await service.DeleteAsync(publisher.Id);
+
+        var deleted = await context.Publishers.FindAsync(publisher.Id);
+        Assert.Null(deleted);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_ShouldNotThrow_WhenPublisherNotFound()
+    {
+        var dbContext = GetDbContext();
+        var service = new PublisherService(dbContext);
+
+        var nonExistentId = Guid.NewGuid();
+
+        var exception = await Record.ExceptionAsync(() => service.DeleteAsync(nonExistentId));
+        Assert.Null(exception);
+    }
 
 }
