@@ -6,5 +6,8 @@ namespace BookManager.Services.Core.Contracts
     {
         Task<List<PublisherDropdownViewModel>> GetAllAsync();
 
+        Task<bool> ExistsByNameAsync(string name);
+
+
     }
 }

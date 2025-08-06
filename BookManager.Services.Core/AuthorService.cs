@@ -61,6 +61,12 @@ public class AuthorService : IAuthorService
         await _context.SaveChangesAsync();
     }
 
+    public async Task<bool> ExistsByNameAsync(string name)
+    {
+        return await this._context.Authors
+            .AnyAsync(a => a.Name.ToLower() == name.ToLower());
+    }
+
     public async Task CreateAsync(CreateAuthorViewModel model, string createdByUserId)
     {
         var author = new Author

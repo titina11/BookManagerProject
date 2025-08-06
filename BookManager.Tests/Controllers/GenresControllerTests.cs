@@ -46,7 +46,7 @@ public class GenresControllerTests
     [Fact]
     public async Task Create_Post_ShouldRedirectToIndex_WhenModelIsValid()
     {
-        var model = new GenreViewModel { Name = "Fantasy" };
+        var model = new CreateGenreViewModel { Name = "Fantasy" };
 
         var result = await _controller.Create(model);
 
@@ -58,13 +58,58 @@ public class GenresControllerTests
     [Fact]
     public async Task Create_Post_ShouldReturnView_WhenModelIsInvalid()
     {
-        var model = new GenreViewModel { Name = "" };
+        var model = new CreateGenreViewModel { Name = "" };
         _controller.ModelState.AddModelError("Name", "Required");
 
         var result = await _controller.Create(model);
 
         var viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(model, viewResult.Model);
+    }
+
+    [Fact]
+    public async Task Create_Post_ShouldReturnError_WhenGenreAlreadyExists()
+    {
+        var genreServiceMock = new Mock<IGenreService>();
+        var controller = new GenresController(genreServiceMock.Object);
+
+        var model = new CreateGenreViewModel { Name = "Fantasy" };
+
+        genreServiceMock
+            .Setup(s => s.ExistsByNameAsync("Fantasy"))
+            .ReturnsAsync(true); 
+
+        var result = await controller.Create(model);
+
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var returnedModel = Assert.IsType<CreateGenreViewModel>(viewResult.Model);
+
+        Assert.False(controller.ModelState.IsValid);
+        Assert.True(controller.ModelState.ContainsKey("Name"));
+        Assert.Contains("вече съществува", controller.ModelState["Name"]!.Errors[0].ErrorMessage);
+    }
+
+    [Fact]
+    public async Task Create_Post_ShouldCreateGenre_WhenValid()
+    {
+        var genreServiceMock = new Mock<IGenreService>();
+        var controller = new GenresController(genreServiceMock.Object);
+
+        var model = new CreateGenreViewModel { Name = "Science Fiction" };
+
+        genreServiceMock
+            .Setup(s => s.ExistsByNameAsync("Science Fiction"))
+            .ReturnsAsync(false);
+
+        genreServiceMock
+            .Setup(s => s.CreateAsync(model))
+            .Returns(Task.CompletedTask);
+
+        var result = await controller.Create(model);
+
+        genreServiceMock.Verify(s => s.CreateAsync(model), Times.Once);
+        var redirect = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal("Index", redirect.ActionName);
     }
 
     [Fact]

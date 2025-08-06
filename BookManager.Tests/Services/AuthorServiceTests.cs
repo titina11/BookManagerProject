@@ -47,6 +47,39 @@ namespace BookManager.Tests.Services
         }
 
         [Fact]
+        public async Task ExistsByNameAsync_ShouldReturnTrue_WhenAuthorExists()
+        {
+            var options = new DbContextOptionsBuilder<BookManagerDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            using var context = new BookManagerDbContext(options);
+            context.Authors.Add(new Author { Id = Guid.NewGuid(), Name = "Test Author", CreatedByUserId = "admin" });
+            await context.SaveChangesAsync();
+
+            var service = new AuthorService(context);
+
+            var result = await service.ExistsByNameAsync("test author");
+
+            Assert.True(result); 
+        }
+
+        [Fact]
+        public async Task ExistsByNameAsync_ShouldReturnFalse_WhenAuthorDoesNotExist()
+        {
+            var options = new DbContextOptionsBuilder<BookManagerDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            using var context = new BookManagerDbContext(options);
+            var service = new AuthorService(context);
+
+            var result = await service.ExistsByNameAsync("nonexistent");
+
+            Assert.False(result);
+        }
+
+        [Fact]
         public async Task GetAllAsync_ShouldReturnAllAuthors()
         {
             var options = new DbContextOptionsBuilder<BookManagerDbContext>()

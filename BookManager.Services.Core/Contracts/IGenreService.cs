@@ -6,7 +6,8 @@ namespace BookManager.Services.Core.Contracts
     {
         Task<IEnumerable<GenreViewModel>> GetAllAsync();
         Task<GenreViewModel?> GetByIdAsync(Guid id);
-        Task CreateAsync(GenreViewModel model);
+        Task CreateAsync(CreateGenreViewModel model);
+        Task<bool> ExistsByNameAsync(string name);
         Task UpdateAsync(GenreViewModel model);
         Task DeleteAsync(Guid id);
     }

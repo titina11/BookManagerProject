@@ -64,6 +64,13 @@ namespace BookManager.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
+            var exists = await _authorService.ExistsByNameAsync(model.Name);
+            if (exists)
+            {
+                ModelState.AddModelError(nameof(model.Name), "Автор с това име вече съществува.");
+                return View(model);
+            }
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();

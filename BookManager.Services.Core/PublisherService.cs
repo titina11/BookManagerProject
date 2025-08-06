@@ -27,5 +27,18 @@ namespace BookManager.Services
 
             return publishers;
         }
+
+        public async Task<bool> ExistsByNameAsync(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return false;
+
+            var normalized = name.Trim().ToLower();
+
+            return await dbContext.Publishers
+                .AnyAsync(p => p.Name.ToLower().Trim() == normalized);
+        }
+
+
     }
 }

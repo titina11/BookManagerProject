@@ -37,7 +37,7 @@ namespace BookManager.Services.Core
             };
         }
 
-        public async Task CreateAsync(GenreViewModel model)
+        public async Task CreateAsync(CreateGenreViewModel model)
         {
             _context.Genres.Add(new Genre
             {
@@ -46,6 +46,12 @@ namespace BookManager.Services.Core
             });
             await _context.SaveChangesAsync();
         }
+
+        public async Task<bool> ExistsByNameAsync(string name)
+        {
+            return await _context.Genres.AnyAsync(g => g.Name.ToLower() == name.ToLower());
+        }
+
 
         public async Task UpdateAsync(GenreViewModel model)
         {

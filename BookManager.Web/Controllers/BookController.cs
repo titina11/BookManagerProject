@@ -59,12 +59,23 @@ namespace BookManager.Web.Controllers
         {
             if (!ModelState.IsValid || model.AuthorId == null || model.GenreId == null || model.PublisherId == null)
             {
+
                 if (model.AuthorId == null)
                     ModelState.AddModelError(nameof(model.AuthorId), "Моля, изберете автор или добавете нов.");
                 if (model.GenreId == null)
                     ModelState.AddModelError(nameof(model.GenreId), "Моля, изберете жанр или добавете нов.");
                 if (model.PublisherId == null)
                     ModelState.AddModelError(nameof(model.PublisherId), "Моля, изберете издателство или добавете нов.");
+
+                if (!string.IsNullOrWhiteSpace(model.NewPublisherName))
+                {
+                    bool exists = await _publisherService.ExistsByNameAsync(model.NewPublisherName);
+                    if (exists)
+                    {
+                        ModelState.AddModelError("NewPublisherName", "Издателството вече съществува.");
+                        return View(model);
+                    }
+                }
 
                 model.Authors = await _bookService.GetAuthorsAsync();
                 model.Genres = await _bookService.GetGenresAsync();

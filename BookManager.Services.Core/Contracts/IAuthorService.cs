@@ -13,6 +13,8 @@ public interface IAuthorService
 
     Task CreateAsync(CreateAuthorViewModel model, string createdByUserId);
 
+    Task<bool> ExistsByNameAsync(string name);
+
     Task<EditAuthorViewModel?> GetByIdAsync(Guid id);
     Task UpdateAsync(EditAuthorViewModel model);
     Task DeleteAsync(Guid id);

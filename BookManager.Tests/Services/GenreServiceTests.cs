@@ -99,7 +99,7 @@ public class GenreServiceTests
             .UseInMemoryDatabase(databaseName: "CreateGenreDb")
             .Options;
 
-        var newGenre = new GenreViewModel
+        var newGenre = new CreateGenreViewModel
         {
             Name = "Научна фантастика"
         };

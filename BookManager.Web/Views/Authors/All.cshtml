@@ -16,7 +16,6 @@
 			<div class="card shadow-sm">
 				<div class="card-body">
 					<h4 class="card-title">@author.Name</h4>
-
 					@if (author.Books.Any())
 					{
 						<ul class="list-group list-group-flush mb-3">
@@ -28,10 +27,8 @@
 								</li>
 								@if (isAdmin)
 								{
-									<a asp-controller="Authors" asp-action="Edit" asp-route-id="@author.Id"
-									   class="btn btn-outline-warning btn-sm mt-2">Редактирай</a>
-									<a asp-controller="Authors" asp-action="Delete" asp-route-id="@author.Id"
-									   class="btn btn-outline-danger btn-sm mt-2">Изтрий</a>
+									<a asp-action="Edit" asp-route-id="@author.Id">Редактирай</a>
+									<a asp-action="Delete" asp-route-id="@author.Id">Изтрий</a>
 								}
 							}
 						</ul>
@@ -39,6 +36,14 @@
 					else
 					{
 						<p class="text-muted">Няма въведени книги.</p>
+						<td>
+							@if (author.Books.Count == 0)
+							{
+								<a asp-action="Edit" asp-route-id="@author.Id">Редактирай</a>
+
+								<a asp-action="Delete" asp-route-id="@author.Id">Изтрий</a>
+							}
+						</td>
 					}
 
 					<a asp-controller="Authors" asp-action="AddBook" asp-route-authorId="@author.Id"

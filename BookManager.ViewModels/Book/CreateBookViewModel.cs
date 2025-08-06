@@ -23,7 +23,8 @@ public class CreateBookViewModel
     [Display(Name = "Ново издателство (ако не е в списъка)")]
     public string? NewPublisherName { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Моля, въведете заглавие.")]
+    [StringLength(100, ErrorMessage = "Заглавието не може да е по-дълго от 100 символа.")]
     public string Title { get; set; } = null!;
 
     [Required]

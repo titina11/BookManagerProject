@@ -46,5 +46,19 @@ public class PublisherServiceTests
         Assert.Empty(result);
     }
 
+    [Fact]
+    public async Task ExistsByNameAsync_ShouldReturnTrue_WhenPublisherExists()
+    {
+        var context = GetDbContext();
+        context.Publishers.Add(new Publisher { Id = Guid.NewGuid(), Name = "Orbit" });
+        await context.SaveChangesAsync();
+
+        var service = new PublisherService(context);
+
+        var result = await service.ExistsByNameAsync("Orbit");
+
+        Assert.True(result);
+    }
+
 
 }

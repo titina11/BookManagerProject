@@ -107,6 +107,28 @@ public class AuthorsControllerTests
     }
 
     [Fact]
+    public async Task Create_Post_ShouldReturnError_WhenAuthorAlreadyExists()
+    {
+        var authorServiceMock = new Mock<IAuthorService>();
+        var controller = new AuthorsController(authorServiceMock.Object);
+
+        var model = new CreateAuthorViewModel { Name = "Existing Author" };
+
+        authorServiceMock
+            .Setup(s => s.ExistsByNameAsync("Existing Author"))
+            .ReturnsAsync(true); 
+
+        var result = await controller.Create(model);
+
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var returnedModel = Assert.IsType<CreateAuthorViewModel>(viewResult.Model);
+
+        Assert.False(controller.ModelState.IsValid);
+        Assert.True(controller.ModelState.ContainsKey("Name"));
+        Assert.Contains("вече съществува", controller.ModelState["Name"]!.Errors[0].ErrorMessage);
+    }
+
+    [Fact]
     public async Task Create_Post_NoUser_ShouldReturnUnauthorized()
     {
         var controllerWithoutUser = new AuthorsController(_authorServiceMock.Object);

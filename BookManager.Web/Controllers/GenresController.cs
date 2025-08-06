@@ -1,4 +1,5 @@
-﻿using BookManager.Services.Core.Contracts;
+﻿using BookManager.Services.Core;
+using BookManager.Services.Core.Contracts;
 using BookManager.ViewModels.Genre;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,16 +25,25 @@ namespace BookManager.Web.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            return View(new CreateGenreViewModel());
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(GenreViewModel model)
+        public async Task<IActionResult> Create(CreateGenreViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
+
+            var exists = await _genreService.ExistsByNameAsync(model.Name);
+            if (exists)
+            {
+                ModelState.AddModelError("Name", $"Жанрът „{model.Name}“ вече съществува.");
+                return View(model);
+            }
+
             await _genreService.CreateAsync(model);
             return RedirectToAction(nameof(Index));
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
