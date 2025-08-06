@@ -1,6 +1,7 @@
 ﻿using BookManager.Data;
 using BookManager.Data.Models;
 using BookManager.Services;
+using BookManager.Services.Core;
 using BookManager.ViewModels.Publisher;
 using BookManager.Web.Areas.Identity.Data;
 using Microsoft.EntityFrameworkCore;

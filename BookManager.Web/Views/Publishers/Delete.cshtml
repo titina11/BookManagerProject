@@ -1,0 +1,17 @@
+﻿@model BookManager.ViewModels.Publisher.PublisherViewModel
+
+@{
+    ViewData["Title"] = "Изтриване на издателство";
+}
+
+<h2 class="mb-4 text-danger">Сигурни ли сте, че искате да изтриете това издателство?</h2>
+
+<div class="alert alert-warning">
+    <strong>@Model.Name</strong>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Изтрий</button>
+    <a asp-action="Index" class="btn btn-secondary">Отказ</a>
+</form>
